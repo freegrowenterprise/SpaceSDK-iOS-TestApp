@@ -1,0 +1,674 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EE86ECEF2DBA188200F8AE21 /* GrowSpaceSDK in Frameworks */ = {isa = PBXBuildFile; productRef = EE86ECEE2DBA188200F8AE21 /* GrowSpaceSDK */; };
+		EEBB92442D83EEA20047DEF2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EEBB92432D83EEA20047DEF2 /* SnapKit */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EEBB921D2D83C9730047DEF2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EEBB91FE2D83C9720047DEF2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EEBB92052D83C9720047DEF2;
+			remoteInfo = GrowSpaceSDKTestApp;
+		};
+		EEBB92272D83C9740047DEF2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EEBB91FE2D83C9720047DEF2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EEBB92052D83C9720047DEF2;
+			remoteInfo = GrowSpaceSDKTestApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EE697CFB2D8CF77100144CAF /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB927A2D87F82C0047DEF2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		EE697CE22D8CF77000144CAF /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		EE697CE42D8CF77000144CAF /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		EEBB92062D83C9720047DEF2 /* GrowSpaceSDKTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GrowSpaceSDKTestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEBB921C2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GrowSpaceSDKTestAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEBB92262D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GrowSpaceSDKTestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EEBB922E2D83C9740047DEF2 /* Exceptions for "GrowSpaceSDKTestApp" folder in "GrowSpaceSDKTestApp" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EEBB92052D83C9720047DEF2 /* GrowSpaceSDKTestApp */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		EEBB92082D83C9720047DEF2 /* GrowSpaceSDKTestApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EEBB922E2D83C9740047DEF2 /* Exceptions for "GrowSpaceSDKTestApp" folder in "GrowSpaceSDKTestApp" target */,
+			);
+			path = GrowSpaceSDKTestApp;
+			sourceTree = "<group>";
+		};
+		EEBB921F2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GrowSpaceSDKTestAppTests;
+			sourceTree = "<group>";
+		};
+		EEBB92292D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = GrowSpaceSDKTestAppUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EEBB92032D83C9720047DEF2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEBB92442D83EEA20047DEF2 /* SnapKit in Frameworks */,
+				EE86ECEF2DBA188200F8AE21 /* GrowSpaceSDK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB92192D83C9730047DEF2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB92232D83C9740047DEF2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EEBB91FD2D83C9720047DEF2 = {
+			isa = PBXGroup;
+			children = (
+				EEBB92082D83C9720047DEF2 /* GrowSpaceSDKTestApp */,
+				EEBB921F2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests */,
+				EEBB92292D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests */,
+				EEBB923B2D83C98F0047DEF2 /* Frameworks */,
+				EEBB92072D83C9720047DEF2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EEBB92072D83C9720047DEF2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EEBB92062D83C9720047DEF2 /* GrowSpaceSDKTestApp.app */,
+				EEBB921C2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests.xctest */,
+				EEBB92262D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EEBB923B2D83C98F0047DEF2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EE697CE22D8CF77000144CAF /* WidgetKit.framework */,
+				EE697CE42D8CF77000144CAF /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EEBB92052D83C9720047DEF2 /* GrowSpaceSDKTestApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEBB922F2D83C9740047DEF2 /* Build configuration list for PBXNativeTarget "GrowSpaceSDKTestApp" */;
+			buildPhases = (
+				EEBB92022D83C9720047DEF2 /* Sources */,
+				EEBB92032D83C9720047DEF2 /* Frameworks */,
+				EEBB92042D83C9720047DEF2 /* Resources */,
+				EEBB927A2D87F82C0047DEF2 /* Embed Frameworks */,
+				EE697CFB2D8CF77100144CAF /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EEBB92082D83C9720047DEF2 /* GrowSpaceSDKTestApp */,
+			);
+			name = GrowSpaceSDKTestApp;
+			packageProductDependencies = (
+				EEBB92432D83EEA20047DEF2 /* SnapKit */,
+				EE86ECEE2DBA188200F8AE21 /* GrowSpaceSDK */,
+			);
+			productName = GrowSpaceSDKTestApp;
+			productReference = EEBB92062D83C9720047DEF2 /* GrowSpaceSDKTestApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EEBB921B2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEBB92342D83C9740047DEF2 /* Build configuration list for PBXNativeTarget "GrowSpaceSDKTestAppTests" */;
+			buildPhases = (
+				EEBB92182D83C9730047DEF2 /* Sources */,
+				EEBB92192D83C9730047DEF2 /* Frameworks */,
+				EEBB921A2D83C9730047DEF2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EEBB921E2D83C9730047DEF2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EEBB921F2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests */,
+			);
+			name = GrowSpaceSDKTestAppTests;
+			packageProductDependencies = (
+			);
+			productName = GrowSpaceSDKTestAppTests;
+			productReference = EEBB921C2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EEBB92252D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEBB92372D83C9740047DEF2 /* Build configuration list for PBXNativeTarget "GrowSpaceSDKTestAppUITests" */;
+			buildPhases = (
+				EEBB92222D83C9740047DEF2 /* Sources */,
+				EEBB92232D83C9740047DEF2 /* Frameworks */,
+				EEBB92242D83C9740047DEF2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EEBB92282D83C9740047DEF2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				EEBB92292D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests */,
+			);
+			name = GrowSpaceSDKTestAppUITests;
+			packageProductDependencies = (
+			);
+			productName = GrowSpaceSDKTestAppUITests;
+			productReference = EEBB92262D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EEBB91FE2D83C9720047DEF2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					EEBB92052D83C9720047DEF2 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					EEBB921B2D83C9730047DEF2 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = EEBB92052D83C9720047DEF2;
+					};
+					EEBB92252D83C9740047DEF2 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = EEBB92052D83C9720047DEF2;
+					};
+				};
+			};
+			buildConfigurationList = EEBB92012D83C9720047DEF2 /* Build configuration list for PBXProject "GrowSpaceSDKTestApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EEBB91FD2D83C9720047DEF2;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EEBB92072D83C9720047DEF2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EEBB92052D83C9720047DEF2 /* GrowSpaceSDKTestApp */,
+				EEBB921B2D83C9730047DEF2 /* GrowSpaceSDKTestAppTests */,
+				EEBB92252D83C9740047DEF2 /* GrowSpaceSDKTestAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EEBB92042D83C9720047DEF2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB921A2D83C9730047DEF2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB92242D83C9740047DEF2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EEBB92022D83C9720047DEF2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB92182D83C9730047DEF2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEBB92222D83C9740047DEF2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EEBB921E2D83C9730047DEF2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EEBB92052D83C9720047DEF2 /* GrowSpaceSDKTestApp */;
+			targetProxy = EEBB921D2D83C9730047DEF2 /* PBXContainerItemProxy */;
+		};
+		EEBB92282D83C9740047DEF2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EEBB92052D83C9720047DEF2 /* GrowSpaceSDKTestApp */;
+			targetProxy = EEBB92272D83C9740047DEF2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EEBB92302D83C9740047DEF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R3A3LV727S;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GrowSpaceSDKTestApp/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "BLE 사용을 위한 권한이 필요합니다";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "BLE 사용을 위한 권한이 필요합니다";
+				INFOPLIST_KEY_NSCameraUsageDescription = "UWB 장치와의 거리, 방향 정확도를 높이기 위해 카메라 접근이 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이 앱은 BLE 기기와의 통신을 위해 블루투스를 사용합니다.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "정확한 위치 계산을 위해 모션 센서 접근이 필요합니다.";
+				INFOPLIST_KEY_NSNearbyInteractionUsageDescription = "이 앱은 근거리 상호작용을 위해 UWB 기능을 사용합니다.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "이 앱은 근거리 상호작용을 위해 UWB 기능을 사용합니다.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freegrow.GrowSpaceSDKTestApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EEBB92312D83C9740047DEF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R3A3LV727S;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GrowSpaceSDKTestApp/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "BLE 사용을 위한 권한이 필요합니다";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "BLE 사용을 위한 권한이 필요합니다";
+				INFOPLIST_KEY_NSCameraUsageDescription = "UWB 장치와의 거리, 방향 정확도를 높이기 위해 카메라 접근이 필요합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이 앱은 BLE 기기와의 통신을 위해 블루투스를 사용합니다.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "정확한 위치 계산을 위해 모션 센서 접근이 필요합니다.";
+				INFOPLIST_KEY_NSNearbyInteractionUsageDescription = "이 앱은 근거리 상호작용을 위해 UWB 기능을 사용합니다.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "이 앱은 근거리 상호작용을 위해 UWB 기능을 사용합니다.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freegrow.GrowSpaceSDKTestApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EEBB92322D83C9740047DEF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		EEBB92332D83C9740047DEF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EEBB92352D83C9740047DEF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R3A3LV727S;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freegrow.GrowSpaceSDKTestAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GrowSpaceSDKTestApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GrowSpaceSDKTestApp";
+			};
+			name = Debug;
+		};
+		EEBB92362D83C9740047DEF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R3A3LV727S;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freegrow.GrowSpaceSDKTestAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GrowSpaceSDKTestApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/GrowSpaceSDKTestApp";
+			};
+			name = Release;
+		};
+		EEBB92382D83C9740047DEF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R3A3LV727S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freegrow.GrowSpaceSDKTestAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GrowSpaceSDKTestApp;
+			};
+			name = Debug;
+		};
+		EEBB92392D83C9740047DEF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = R3A3LV727S;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freegrow.GrowSpaceSDKTestAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = GrowSpaceSDKTestApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EEBB92012D83C9720047DEF2 /* Build configuration list for PBXProject "GrowSpaceSDKTestApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEBB92322D83C9740047DEF2 /* Debug */,
+				EEBB92332D83C9740047DEF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EEBB922F2D83C9740047DEF2 /* Build configuration list for PBXNativeTarget "GrowSpaceSDKTestApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEBB92302D83C9740047DEF2 /* Debug */,
+				EEBB92312D83C9740047DEF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EEBB92342D83C9740047DEF2 /* Build configuration list for PBXNativeTarget "GrowSpaceSDKTestAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEBB92352D83C9740047DEF2 /* Debug */,
+				EEBB92362D83C9740047DEF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EEBB92372D83C9740047DEF2 /* Build configuration list for PBXNativeTarget "GrowSpaceSDKTestAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEBB92382D83C9740047DEF2 /* Debug */,
+				EEBB92392D83C9740047DEF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/freegrowenterprise/SpaceSDK-iOS/";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE86ECEE2DBA188200F8AE21 /* GrowSpaceSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */;
+			productName = GrowSpaceSDK;
+		};
+		EEBB92432D83EEA20047DEF2 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = EEBB91FE2D83C9720047DEF2 /* Project object */;
+}
