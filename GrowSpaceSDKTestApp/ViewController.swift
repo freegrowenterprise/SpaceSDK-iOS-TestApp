@@ -12,86 +12,308 @@ import GrowSpaceSDK
 
 @available(iOS 16.0, *)
 class ViewController: UIViewController {
-    private let growSpaceUWBSDK = GrowSpaceSDK(apiKey: "")
+    private let growSpaceUWBSDK = GrowSpaceSDK(apiKey: "API-KEY")
+    private var maximumConnectionCount: Int = 4
+    private var maximumConnectionDistance: Float = 8.0
     
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        return stackView
+    // MARK: - Component
+    
+    private let appBarView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
     }()
-    private let deviceStackView = UIStackView()
+    
+    private let appBarTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Space UWB Scanner"
+        label.font = .boldSystemFont(ofSize: 18)
+        label.textColor = .black
+        return label
+    }()
+    
+    private let divider: UIView = {
+        let view = UIView()
+        view.backgroundColor = .lightGray
+        return view
+    }()
+    
+    private let maxConnectionsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "최대 연결 개수 설정"
+        return label
+    }()
+
+    private let maxConnectionsButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("최대 연결 수: 4", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.showsMenuAsPrimaryAction = true
+        return button
+    }()
+    
+    private let explainMaxConnectionText: UILabel = {
+        let label = UILabel()
+        label.text = "7개 이상 동시 연결시 OS 내부적으로 충돌이 발생합니다."
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let distanceLabel: UILabel = {
+        let label = UILabel()
+        label.text = "최대 연결 거리 설정 (m)"
+        return label
+    }()
+
+    private let distanceTextField: UITextField = {
+        let textField = UITextField()
+        textField.borderStyle = .roundedRect
+        textField.placeholder = "예: 5.0"
+        textField.keyboardType = .decimalPad
+        textField.textAlignment = .right
+        textField.text = "8.0"
+        return textField
+    }()
+    
+    private let explainDistanceText: UILabel = {
+        let label = UILabel()
+        label.text = "설정 거리에서 초과되었을 때 연결을 끊고 새로운 장치 연결을 시도합니다."
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let rssiConditionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "신호 강한 순 우선 연결 설정"
+        return label
+    }()
+    
+    private let explainConnectText: UILabel = {
+        let label = UILabel()
+        label.text = "RSSI가 가장 큰 UWB 장치부터 연결을 시도합니다."
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let rssiConditionSwitch: UISwitch = {
+        let toggle = UISwitch()
+        toggle.isOn = true
+        return toggle
+    }()
+    private let deviceContentStack = UIStackView()
     private var deviceViews: [String: UIStackView] = [:]
+    private let deviceScrollView = UIScrollView()
+    
     private let uwbStartButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("UWB 스캔 시작", for: .normal)
+        button.setTitle("Start UWB Scan", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(startUWBScan), for: .touchUpInside)
         return button
     }()
+
     private let uwbStopButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("UWB 스캔 종료", for: .normal)
+        button.setTitle("Stop UWB Scan", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemGray
         button.layer.cornerRadius = 10
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(stopUWBScan), for: .touchUpInside)
         return button
     }()
+    private let buttonStackView = UIStackView()
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.backgroundColor = .white
         self.setupLayout()
+        self.setupActions()
+        self.setupMaxConnectionMenu()
+        self.setupKeyboardDismissGesture()
     }
     
     private func setupLayout() {
-        self.view.addSubview(self.stackView)
-        
-        self.stackView.axis = .vertical
-        self.stackView.spacing = 16
-        self.stackView.alignment = .fill
-        self.stackView.distribution = .equalSpacing
-        
-        self.stackView.addArrangedSubview(self.uwbStartButton)
-        self.stackView.addArrangedSubview(self.uwbStopButton)
-        
-        self.stackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.top.equalToSuperview().offset(100)
+        view.addSubview(appBarView)
+        appBarView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(48)
         }
 
-        self.uwbStartButton.snp.makeConstraints {
+        appBarView.addSubview(appBarTitleLabel)
+        appBarTitleLabel.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
+        }
+
+        view.addSubview(divider)
+        divider.snp.makeConstraints {
+            $0.top.equalTo(appBarView.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(1)
+        }
+
+        let configStack = UIStackView()
+        configStack.axis = .vertical
+        configStack.spacing = 20
+        configStack.alignment = .fill
+        view.addSubview(configStack)
+        configStack.snp.makeConstraints {
+            $0.top.equalTo(divider.snp.bottom).offset(12)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
+        }
+
+        let topSpacer = UIView()
+        topSpacer.snp.makeConstraints { $0.height.equalTo(12) }
+        configStack.addArrangedSubview(topSpacer)
+
+        let maxConnectionRow = UIStackView()
+        maxConnectionRow.axis = .horizontal
+        maxConnectionRow.spacing = 8
+        maxConnectionRow.alignment = .center
+        maxConnectionRow.addArrangedSubview(maxConnectionsLabel)
+        maxConnectionRow.addArrangedSubview(maxConnectionsButton)
+        
+        let maxConnectionGroup = UIStackView()
+        maxConnectionGroup.axis = .vertical
+        maxConnectionGroup.spacing = 4
+        maxConnectionGroup.alignment = .fill
+        maxConnectionGroup.addArrangedSubview(maxConnectionRow)
+        maxConnectionGroup.addArrangedSubview(explainMaxConnectionText)
+        configStack.addArrangedSubview(maxConnectionGroup)
+
+        let distanceRow = UIStackView()
+        distanceRow.axis = .horizontal
+        distanceRow.spacing = 8
+        distanceRow.alignment = .center
+        distanceRow.addArrangedSubview(distanceLabel)
+        distanceRow.addArrangedSubview(distanceTextField)
+
+        let distanceGroup = UIStackView()
+        distanceGroup.axis = .vertical
+        distanceGroup.spacing = 4
+        distanceGroup.alignment = .fill
+        distanceGroup.addArrangedSubview(distanceRow)
+        distanceGroup.addArrangedSubview(explainDistanceText)
+        configStack.addArrangedSubview(distanceGroup)
+
+        let switchRow = UIStackView()
+        switchRow.axis = .horizontal
+        switchRow.spacing = 8
+        switchRow.alignment = .center
+        switchRow.addArrangedSubview(rssiConditionLabel)
+        switchRow.addArrangedSubview(rssiConditionSwitch)
+        
+        let connectConditionGroup = UIStackView()
+        connectConditionGroup.axis = .vertical
+        connectConditionGroup.spacing = 4
+        connectConditionGroup.alignment = .fill
+        connectConditionGroup.addArrangedSubview(switchRow)
+        connectConditionGroup.addArrangedSubview(explainConnectText)
+        configStack.addArrangedSubview(connectConditionGroup)
+
+        deviceContentStack.axis = .vertical
+        deviceContentStack.spacing = 12
+        deviceContentStack.alignment = .fill
+        deviceScrollView.addSubview(deviceContentStack)
+        deviceContentStack.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(deviceScrollView.snp.width)
+        }
+
+        loadingIndicator.hidesWhenStopped = true
+        deviceContentStack.addArrangedSubview(loadingIndicator)
+        loadingIndicator.snp.makeConstraints {
+            $0.height.equalTo(44)
+        }
+
+        buttonStackView.axis = .horizontal
+        buttonStackView.spacing = 12
+        buttonStackView.distribution = .fillEqually
+        buttonStackView.addArrangedSubview(uwbStopButton)
+        buttonStackView.addArrangedSubview(uwbStartButton)
+
+        view.addSubview(buttonStackView)
+        buttonStackView.snp.makeConstraints {
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.height.equalTo(60)
         }
-
-        self.uwbStopButton.snp.makeConstraints {
-            $0.height.equalTo(60)
-        }
-
-        deviceStackView.axis = .vertical
-        deviceStackView.spacing = 12
-        deviceStackView.alignment = .fill
-        view.addSubview(deviceStackView)
-
-        deviceStackView.snp.makeConstraints {
-            $0.top.equalTo(stackView.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(16)
+        
+        view.addSubview(deviceScrollView)
+        deviceScrollView.snp.makeConstraints {
+            $0.top.equalTo(configStack.snp.bottom).offset(12)
+            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.bottom.equalTo(buttonStackView.snp.top).offset(-12)
         }
     }
     
+    private func setupActions() {
+        uwbStartButton.addTarget(self, action: #selector(startUWBScan), for: .touchUpInside)
+        uwbStopButton.addTarget(self, action: #selector(stopUWBScan), for: .touchUpInside)
+        distanceTextField.addTarget(self, action: #selector(distanceTextFieldDidChange), for: .editingChanged)
+    }
+    
+    private func setupMaxConnectionMenu() {
+        let actions = (1...6).map { count in
+            UIAction(title: "\(count)", handler: { [weak self] _ in
+                self?.maximumConnectionCount = count
+                self?.maxConnectionsButton.setTitle("최대 연결 수: \(count)", for: .normal)
+            })
+        }
+        let menu = UIMenu(title: "", options: .displayInline, children: actions)
+        maxConnectionsButton.menu = menu
+    }
+    
+    private func setupKeyboardDismissGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc private func distanceTextFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text,
+           let value = Float(text) {
+            maximumConnectionDistance = value
+        }
+    }
+
+    
     @objc private func startUWBScan() {
+        self.deviceViews.removeAll()
+        self.deviceContentStack.arrangedSubviews.forEach { view in
+            if view !== loadingIndicator {
+                self.deviceContentStack.removeArrangedSubview(view)
+                view.removeFromSuperview()
+            }
+        }
+        
+        loadingIndicator.startAnimating()
+
         growSpaceUWBSDK.startUWBRanging(
+            maximumConnectionCount: self.maximumConnectionCount,
+            replacementDistanceThreshold: self.maximumConnectionDistance,
             onUpdate: { [weak self] result in
                 guard let self = self else { return }
                 DispatchQueue.main.async {
+                    self.loadingIndicator.stopAnimating()
+
                     let name = result.deviceName
                     if let view = self.deviceViews[name],
                        let labels = view.arrangedSubviews as? [UILabel], labels.count == 4 {
-                        labels[1].text = "거리: \(result.distance)m"
-                        labels[2].text = "방위각: \(result.azimuth)°"
-                        labels[3].text = "고도: \(result.elevation)°"
+                        labels[1].text = "Distance: \(result.distance)m"
+                        labels[2].text = "Azimuth: \(result.azimuth)°"
+                        labels[3].text = "Elevation: \(result.elevation)°"
                     } else {
                         let container = UIStackView()
                         container.axis = .vertical
@@ -102,24 +324,24 @@ class ViewController: UIViewController {
                         container.layoutMargins = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
 
                         let nameLabel = UILabel()
-                        nameLabel.text = "디바이스: \(result.deviceName)"
+                        nameLabel.text = "Device Name: \(result.deviceName)"
                         nameLabel.font = .boldSystemFont(ofSize: 16)
 
                         let distanceLabel = UILabel()
-                        distanceLabel.text = "거리: \(result.distance)m"
+                        distanceLabel.text = "Distance: \(result.distance)m"
 
                         let azimuthLabel = UILabel()
-                        azimuthLabel.text = "방위각: \(result.azimuth)°"
+                        azimuthLabel.text = "Azimuth: \(result.azimuth)°"
 
                         let elevationLabel = UILabel()
-                        elevationLabel.text = "고도: \(result.elevation)°"
+                        elevationLabel.text = "Elevation: \(result.elevation)°"
 
                         [nameLabel, distanceLabel, azimuthLabel, elevationLabel].forEach {
                             $0.textColor = .darkGray
                             container.addArrangedSubview($0)
                         }
 
-                        self.deviceStackView.addArrangedSubview(container)
+                        self.deviceContentStack.addArrangedSubview(container)
                         self.deviceViews[name] = container
                     }
                 }
