@@ -53,11 +53,28 @@ https://github.com/user-attachments/assets/9d222cfe-886a-490c-b21d-48da70ff4dd7
 
 ## 🧭 개발자용 설정 옵션
 
-| 항목 | 설명 |
-|------|------|
-| 최대 연결 수 | 동시에 연결 가능한 디바이스 수 설정 |
-| 연결 거리 제한 | 일정 거리 초과 시 연결 해제 |
-| 신호 세기 우선 | RSSI 높은 순으로 우선 연결 시도 |
+| 항목 | 설명 | Type | 기본값 |  
+|------|------|------|------|
+| 최대 연결 수 | 동시에 연결 가능한 디바이스 수 설정 | Int | 4 |
+| 연결 거리 제한(m) | 일정 거리 초과 시 연결 해제 | Float | 8 |
+| 신호 세기 우선 | RSSI 높은 순으로 우선 연결 시도 | Bool | true |
+
+
+```swift
+let growSpaceSDK = GrowSpaceSDK(apiKey: "API-KEY")
+
+growSpaceSDK.startUWBRanging(
+    maximumConnectionCount: 4, // 최대 연결 수
+    replacementDistanceThreshold: 8, // 연결 거리 제한 (단위: m)
+    isConnectStrongestSignalFirst: true, // 신호 세기 우선
+    onUpdate: {
+        // UWB 측정 값 전달
+    },
+    onDisconnect: {
+        // 장치와 연결 끊어짐 감지
+    }
+)
+```
 
 ---
 
