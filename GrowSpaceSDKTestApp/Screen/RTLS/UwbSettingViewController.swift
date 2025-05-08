@@ -209,7 +209,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
         container.spacing = 4
 
         let nameLabel = UILabel()
-        nameLabel.text = "이름: \(name)"
+        nameLabel.text = "장치 : \(name)"
 
         let xField = UITextField()
         xField.borderStyle = .roundedRect
@@ -242,7 +242,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
                   let xField = stack.arrangedSubviews[1] as? UITextField,
                   let yField = stack.arrangedSubviews[2] as? UITextField else { continue }
 
-            let name = nameLabel.text?.replacingOccurrences(of: "이름: ", with: "") ?? ""
+            let name = nameLabel.text?.replacingOccurrences(of: "장치 : ", with: "") ?? ""
             let x = CGFloat(Double(xField.text ?? "0") ?? 0)
             let y = CGFloat(Double(yField.text ?? "0") ?? 0)
             viewModel.setCoordinate(macAddress: name, x: x, y: y)

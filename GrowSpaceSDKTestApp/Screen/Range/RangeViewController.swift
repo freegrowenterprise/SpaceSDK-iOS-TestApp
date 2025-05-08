@@ -366,14 +366,7 @@ class RangeViewController: UIViewController {
                     }
                 }
             },
-            onDisconnect: { [weak self] disconnect in
-                guard let self = self else { return }
-                DispatchQueue.main.async {
-                    if let view = self.deviceViews[disconnect.deviceName] {
-                        view.removeFromSuperview()
-                        self.deviceViews.removeValue(forKey: disconnect.deviceName)
-                    }
-                }
+            onDisconnect: { _ in
             }
         )
         

@@ -13,10 +13,11 @@ import GrowSpaceSDK
 class RTLSViewController: UIViewController {
     private let viewModel: DeviceCoordinateViewModel
     private let growSpaceUWBSDK = GrowSpaceSDK(apiKey: "API-KEY")
+    private let growSpaceRTLS = GrowSpaceRTLS()
     private var rowCount: Int = 5
     private var columnCount: Int = 5
     private var gridLayer = CALayer()
-    private var uwbResults: [String: UWBResult] = [:]
+    private var uwbResults: [String: UWBRangeResult] = [:]
 
     private let scrollView = UIScrollView()
     private let contentView = UIStackView()
@@ -93,11 +94,9 @@ class RTLSViewController: UIViewController {
         rowInput.placeholder = "세로 (max 10)"
         rowInput.borderStyle = .roundedRect
         rowInput.keyboardType = .numberPad
-        rowInput.text = "5"
         columnInput.placeholder = "가로 (max 10)"
         columnInput.borderStyle = .roundedRect
         columnInput.keyboardType = .numberPad
-        columnInput.text = "5"
         gridSetButton.setTitle("설정", for: .normal)
         gridInputStack.addArrangedSubview(rowInput)
         gridInputStack.addArrangedSubview(columnInput)
@@ -133,7 +132,7 @@ class RTLSViewController: UIViewController {
         buttonStack.spacing = 12
         buttonStack.distribution = .fillEqually
         stopButton.setTitle("위치 중지", for: .normal)
-        stopButton.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.4)
+        stopButton.backgroundColor = .lightGray
         stopButton.setTitleColor(.white, for: .normal)
         stopButton.layer.cornerRadius = 8
         startButton.setTitle("위치 시작", for: .normal)
@@ -170,8 +169,7 @@ class RTLSViewController: UIViewController {
             resultLabel.text = "결과 없음"
         } else {
             let lines = uwbResults.values.map { result in
-                let directionText = result.direction.map { String(format: "%.2f", $0) }.joined(separator: ", ")
-                return "[\(result.deviceName)] → 거리: \(String(format: "%.2f", result.distance))m, 각도: azimuth \(result.azimuth)°, elevation \(result.elevation)°, 방향: [\(directionText)]"
+                return "[\(result.deviceName)] → 거리: \(String(format: "%.2f", result.distance))m"
             }
             resultLabel.text = lines.joined(separator: "\n\n")
             statusLabel.isHidden = true
@@ -202,13 +200,22 @@ class RTLSViewController: UIViewController {
                 DispatchQueue.main.async {
                     self?.uwbResults[result.deviceName] = result
                     self?.updateResultLabel()
+                    guard let self else { return }
+                    let anchors = self.convertToAnchorResults(
+                        from: self.uwbResults,
+                        coordinates: self.viewModel.deviceCoordinates
+                    )
+                    
+                    self.growSpaceRTLS.startUwbRtls(
+                        anchors: anchors, onResult: { location in
+                            DispatchQueue.main.async {
+                                self.viewModel.setCurrentLocation(CGPoint(x: location.x, y: location.y))
+                                self.drawGrid()
+                            }
+                        })
                 }
             },
-            onDisconnect: { [weak self] disconnect in
-                DispatchQueue.main.async {
-                    self?.uwbResults.removeValue(forKey: disconnect.deviceName)
-                    self?.updateResultLabel()
-                }
+            onDisconnect: { _ in
             }
         )
     }
@@ -219,6 +226,52 @@ class RTLSViewController: UIViewController {
         rowCount = max(1, min(10, row))
         columnCount = max(1, min(10, col))
         drawGrid()
+    }
+    
+    private func convertToAnchorResults(
+        from uwbResults: [String: UWBRangeResult],
+        coordinates: [String: CGPoint]
+    ) -> [RTLSAnchorResult] {
+        return uwbResults.values.compactMap { result in
+            guard let point = coordinates[result.deviceName] else {
+                return nil  // 좌표가 없는 장치는 제외
+            }
+
+            let x = Double(point.x)
+            let y = Double(point.y)
+            let z = 1.0  // 고정값 또는 필요 시 변경
+
+            return RTLSAnchorResult(
+                id: result.deviceName,
+                x: x,
+                y: y,
+                z: z,
+                distance: Double(result.distance)
+            )
+        }
+    }
+    
+    private func addDotOnGrid(name: String, at point: CGPoint, cellSize: CGFloat) {
+        let dot = UIView()
+        dot.backgroundColor = .red
+        dot.layer.cornerRadius = 5
+        dot.clipsToBounds = true
+        dot.frame = CGRect(
+            x: CGFloat(point.x) * cellSize - 5,
+            y: CGFloat(point.y) * cellSize - 5,
+            width: 10,
+            height: 10
+        )
+
+        let label = UILabel(frame: CGRect(x: dot.frame.minX, y: dot.frame.minY - 16, width: 60, height: 14))
+        label.text = name
+        label.font = .systemFont(ofSize: 10)
+        label.textColor = .black
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+
+        gridView.addSubview(dot)
+        gridView.addSubview(label)
     }
 
     private func drawGrid() {
@@ -247,25 +300,35 @@ class RTLSViewController: UIViewController {
         }
 
         for (name, point) in viewModel.deviceCoordinates {
-            let dot = UIView()
-            dot.backgroundColor = .red
-            dot.layer.cornerRadius = 5
-            dot.clipsToBounds = true
-            dot.frame = CGRect(
-                x: CGFloat(point.x) * cellSize - 5,
-                y: CGFloat(point.y) * cellSize - 5,
-                width: 10, height: 10
-            )
-
-            let label = UILabel(frame: CGRect(x: dot.frame.minX, y: dot.frame.minY - 16, width: 60, height: 14))
-            label.text = name
-            label.font = .systemFont(ofSize: 10)
-            label.textColor = .black
-            label.textAlignment = .center
-            label.adjustsFontSizeToFitWidth = true
-
-            gridView.addSubview(dot)
-            gridView.addSubview(label)
+            addDotOnGrid(name: name, at: point, cellSize: cellSize, color: .red)
         }
+
+        // ✅ 내 위치 점 추가
+        if let current = viewModel.currentRtlsLocation {
+            addDotOnGrid(name: "내 위치", at: current, cellSize: cellSize, color: .blue)
+        }
+    }
+    
+    private func addDotOnGrid(name: String, at point: CGPoint, cellSize: CGFloat, color: UIColor = .red) {
+        let dot = UIView()
+        dot.backgroundColor = color
+        dot.layer.cornerRadius = 5
+        dot.clipsToBounds = true
+        dot.frame = CGRect(
+            x: point.x * cellSize - 5,
+            y: point.y * cellSize - 5,
+            width: 10,
+            height: 10
+        )
+
+        let label = UILabel(frame: CGRect(x: dot.frame.minX, y: dot.frame.minY - 16, width: 60, height: 14))
+        label.text = name
+        label.font = .systemFont(ofSize: 10)
+        label.textColor = color
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+
+        gridView.addSubview(dot)
+        gridView.addSubview(label)
     }
 }
