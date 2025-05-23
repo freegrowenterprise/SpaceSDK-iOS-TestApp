@@ -1,33 +1,23 @@
-# 📡 Space UWB SDK Example App
+# 📡 Space UWB SDK Example App (iOS)
 
 이 프로젝트는 **FREEGROW Inc**의 UWB 제품을 iOS 기기와 연동하여 사용할 수 있도록 만든 **공식 SDK 예제 앱**입니다.  
-UWB 연결, 거리 측정, 방향 데이터 수신 등 핵심 기능을 직접 테스트할 수 있도록 구성되어 있으며, **화면 녹화 예시도 함께 포함**되어 있습니다.
-
----
-
-## 📦 구성 내용
-
-### ✅ SDK 연동 예제
-- FREEGROW UWB SDK를 활용한 장치 연결 흐름
-- BLE를 통한 디바이스 검색 및 UWB Ranging 처리
-- 여러 디바이스를 동시 연결하여 거리/방위각 수신
-
-### ✅ UI 기능
-- 최대 연결 개수, 거리 제한, 연결 우선 조건 설정 UI
-- 연결된 각 디바이스의 실시간 정보 표시
-- 스캔 시작/종료 버튼 포함
-
+UWB 연결, 거리 측정, 방향 데이터 수신 등 핵심 기능을 직접 테스트할 수 있도록 구성되어 있으며, **직관적인 UI와 실시간 디바이스 상태 시각화 기능을 포함**하고 있습니다.
 
 ---
 
 ## 🔧 요구 사항
 
+###  Software
 - iOS 16.0 이상
 - Xcode 14 이상
 - Swift 5.7
-- 실제 UWB 디바이스 **(Grow Space UWB 제품)**
+
+### Hardware
+- [UWB 지원 iOS 휴대폰](https://blog.naver.com/growdevelopers/223775171523)
+- 실제 UWB 디바이스 [(Grow Space UWB 제품)](https://grow-space.io/product/n1-mk-01/)
 
 ---
+
 
 ## 🚀 시작하기
 
@@ -42,40 +32,42 @@ UWB 연결, 거리 측정, 방향 데이터 수신 등 핵심 기능을 직접 �
 
 ---
 
-## 🎥 예제 영상
+## 📦 구성 내용
 
-> 실제 디바이스 연결 및 거리 측정 동작을 확인할 수 있습니다.
+### ✅ SDK 연동 예제
+- FREEGROW UWB SDK(SpaceUwb)를 활용한 장치 연결 흐름
+- BLE를 통한 디바이스 검색 및 UWB Ranging 처리
+- RTLS 알고리즘을 통한 실시간 위치 추정
+
+### ✅ 주요 기능
+
+#### 📏 거리 및 방향 측정 기능
+- UWB 장치와 BLE를 통해 연결한 후,
+- 실시간으로 **거리(distance)**, **방위각(azimuth)**, **고도(elevation)** 값을 측정하여 UI에 표시합니다.
+- 연결된 디바이스들은 리스트로 정렬되어 각 장치의 실시간 상태를 확인할 수 있습니다.
 
 https://github.com/user-attachments/assets/9d222cfe-886a-490c-b21d-48da70ff4dd7
 
 ---
 
-## 🧭 개발자용 설정 옵션
+#### 🧭 RTLS 격자 기반 위치 표시 기능
+- 각 UWB 앵커 장치의 위치를 좌표값으로 설정한 뒤,
+- RTLS 알고리즘을 통해 **현재 사용자 위치(x, y, z)** 를 실시간으로 계산합니다.
+- 계산된 위치는 **앱 내 격자 기반 UI(Canvas/Grid)** 상에 시각적으로 표시되어,
+  공간 내에서의 이동 상태를 직관적으로 확인할 수 있습니다.
 
-| 항목 | 설명 | Type | 기본값 |  
-|------|------|------|------|
-| 최대 연결 수 | 동시에 연결 가능한 디바이스 수 설정 | Int | 4 |
-| 연결 거리 제한(m) | 일정 거리 초과 시 연결 해제 | Float | 8 |
-| 신호 세기 우선 | RSSI 높은 순으로 우선 연결 시도 | Bool | true |
+**UWB 장비 위치 세팅**
 
+https://github.com/user-attachments/assets/94d6af1b-1b81-4388-a21b-8e4df8aa87df
 
-```swift
-let growSpaceSDK = GrowSpaceSDK(apiKey: "API-KEY")
+**내 위치 확인**
 
-growSpaceSDK.startUWBRanging(
-    maximumConnectionCount: 4, // 최대 연결 수
-    replacementDistanceThreshold: 8, // 연결 거리 제한 (단위: m)
-    isConnectStrongestSignalFirst: true, // 신호 세기 우선
-    onUpdate: {
-        // UWB 측정 값 전달
-    },
-    onDisconnect: {
-        // 장치와 연결 끊어짐 감지
-    }
-)
-```
+https://github.com/user-attachments/assets/7a7eb3a4-af1b-4b8e-af1f-1d34c5b91269
+
 
 ---
+
+
 
 ## 🏢 제작
 
