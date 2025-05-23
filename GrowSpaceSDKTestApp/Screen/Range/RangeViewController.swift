@@ -370,7 +370,7 @@ class RangeViewController: UIViewController {
             }
         )
         
-        self.demoModeTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
+        self.demoModeTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             if !self.rangingStarted {
                 self.showDemoModeAlert()
