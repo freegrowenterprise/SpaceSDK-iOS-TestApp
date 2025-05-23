@@ -12,7 +12,7 @@ import GrowSpaceSDK
 import ActivityKit
 
 class RangeViewController: UIViewController {
-    private let growSpaceUWBSDK = GrowSpaceSDK(apiKey: "API-KEY")
+    private let growSpaceUWBSDK = GrowSpaceSDK()
     private var maximumConnectionCount: Int = 4
     private var maximumConnectionDistance: Float = 8.0
     

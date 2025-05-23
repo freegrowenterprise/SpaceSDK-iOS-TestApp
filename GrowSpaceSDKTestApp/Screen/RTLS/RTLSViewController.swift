@@ -12,7 +12,7 @@ import GrowSpaceSDK
 
 class RTLSViewController: UIViewController {
     private let viewModel: DeviceCoordinateViewModel
-    private let growSpaceUWBSDK = GrowSpaceSDK(apiKey: "API-KEY")
+    private let growSpaceUWBSDK = GrowSpaceSDK()
     private let growSpaceRTLS = GrowSpaceRTLS()
     private var rowCount: Int = 5
     private var columnCount: Int = 5
