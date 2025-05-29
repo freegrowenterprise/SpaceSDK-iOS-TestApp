@@ -16,7 +16,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "BLE 장치 설정"
+        label.text = "BLE Device Settings"
         label.font = .boldSystemFont(ofSize: 20)
         label.textAlignment = .center
         return label
@@ -24,7 +24,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
 
     private let scanStatusLabel: UILabel = {
         let label = UILabel()
-        label.text = "발견된 장치: 0개"
+        label.text = "Discovered Devices: 0"
         label.font = .systemFont(ofSize: 14)
         label.textColor = .darkGray
         return label
@@ -32,7 +32,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
 
     private let scanStartButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("시작", for: .normal)
+        button.setTitle("Start", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 8
@@ -41,7 +41,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
 
     private let scanStopButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("중지", for: .normal)
+        button.setTitle("Stop", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .lightGray
         button.layer.cornerRadius = 8
@@ -53,7 +53,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
 
     private let saveButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("저장", for: .normal)
+        button.setTitle("Save", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 8
@@ -72,7 +72,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        self.title = "UWB 설정"
+        self.title = "UWB Setting"
         setupUI()
         setupActions()
         setupKeyboardDismissGesture()
@@ -170,12 +170,12 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
         discoveredDevices.removeAll()
         deviceListView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         centralManager?.scanForPeripherals(withServices: nil, options: nil)
-        scanStatusLabel.text = "BLE 시작..."
+        scanStatusLabel.text = "Start BLE..."
     }
 
     @objc private func stopScan() {
         centralManager?.stopScan()
-        scanStatusLabel.text = "시작 중지됨"
+        scanStatusLabel.text = "Stopping"
     }
 
     @objc private func saveCoordinates() {
@@ -200,7 +200,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
         }
         discoveredDevices.append(peripheral)
         addDevice(name: name, x: 0.0, y: 0.0)
-        scanStatusLabel.text = "발견된 장치: \(discoveredDevices.count)개"
+        scanStatusLabel.text = "Discovered Devices: \(discoveredDevices.count)"
     }
 
     private func addDevice(name: String, x: Double, y: Double) {
@@ -209,18 +209,18 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
         container.spacing = 4
 
         let nameLabel = UILabel()
-        nameLabel.text = "장치 : \(name)"
+        nameLabel.text = "Device : \(name)"
 
         let xField = UITextField()
         xField.borderStyle = .roundedRect
         xField.keyboardType = .decimalPad
-        xField.placeholder = "X 좌표"
+        xField.placeholder = "X-coordinates"
         xField.text = "\(x)"
 
         let yField = UITextField()
         yField.borderStyle = .roundedRect
         yField.keyboardType = .decimalPad
-        yField.placeholder = "Y 좌표"
+        yField.placeholder = "Y-coordinates"
         yField.text = "\(y)"
 
         xField.addTarget(self, action: #selector(updateCoordinate(_:)), for: .editingChanged)
@@ -242,7 +242,7 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
                   let xField = stack.arrangedSubviews[1] as? UITextField,
                   let yField = stack.arrangedSubviews[2] as? UITextField else { continue }
 
-            let name = nameLabel.text?.replacingOccurrences(of: "장치 : ", with: "") ?? ""
+            let name = nameLabel.text?.replacingOccurrences(of: "Device : ", with: "") ?? ""
             let x = CGFloat(Double(xField.text ?? "0") ?? 0)
             let y = CGFloat(Double(yField.text ?? "0") ?? 0)
             viewModel.setCoordinate(macAddress: name, x: x, y: y)

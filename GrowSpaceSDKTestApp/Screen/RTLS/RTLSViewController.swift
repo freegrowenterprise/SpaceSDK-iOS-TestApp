@@ -24,7 +24,7 @@ class RTLSViewController: UIViewController {
 
     private let settingButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("UWB 장비 위치 설정", for: .normal)
+        button.setTitle("UWB equipment positioning", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 8
@@ -91,13 +91,13 @@ class RTLSViewController: UIViewController {
         gridInputStack.axis = .horizontal
         gridInputStack.spacing = 8
         gridInputStack.distribution = .fillEqually
-        rowInput.placeholder = "세로 (max 10)"
+        rowInput.placeholder = "Vertical (max 10)"
         rowInput.borderStyle = .roundedRect
         rowInput.keyboardType = .numberPad
-        columnInput.placeholder = "가로 (max 10)"
+        columnInput.placeholder = "Horizontal (max 10)"
         columnInput.borderStyle = .roundedRect
         columnInput.keyboardType = .numberPad
-        gridSetButton.setTitle("설정", for: .normal)
+        gridSetButton.setTitle("Set", for: .normal)
         gridInputStack.addArrangedSubview(rowInput)
         gridInputStack.addArrangedSubview(columnInput)
         gridInputStack.addArrangedSubview(gridSetButton)
@@ -110,7 +110,7 @@ class RTLSViewController: UIViewController {
             $0.height.equalTo(gridView.snp.width)
         }
 
-        statusLabel.text = "위치 체크 중..."
+        statusLabel.text = "Checking location..."
         statusLabel.textAlignment = .center
         statusLabel.font = .systemFont(ofSize: 14)
         statusLabel.textColor = .gray
@@ -124,18 +124,18 @@ class RTLSViewController: UIViewController {
         resultLabel.numberOfLines = 0
         resultLabel.textAlignment = .center
         resultLabel.font = .systemFont(ofSize: 16)
-        resultLabel.text = "결과 위치: 없음"
+        resultLabel.text = "Result Location: None"
         contentView.addArrangedSubview(resultLabel)
 
         let buttonStack = UIStackView(arrangedSubviews: [stopButton, startButton])
         buttonStack.axis = .horizontal
         buttonStack.spacing = 12
         buttonStack.distribution = .fillEqually
-        stopButton.setTitle("위치 중지", for: .normal)
+        stopButton.setTitle("Stop", for: .normal)
         stopButton.backgroundColor = .lightGray
         stopButton.setTitleColor(.white, for: .normal)
         stopButton.layer.cornerRadius = 8
-        startButton.setTitle("위치 시작", for: .normal)
+        startButton.setTitle("Start", for: .normal)
         startButton.backgroundColor = .systemBlue
         startButton.setTitleColor(.white, for: .normal)
         startButton.layer.cornerRadius = 8
@@ -166,10 +166,10 @@ class RTLSViewController: UIViewController {
 
     private func updateResultLabel() {
         if uwbResults.isEmpty {
-            resultLabel.text = "결과 없음"
+            resultLabel.text = "Empty"
         } else {
             let lines = uwbResults.values.map { result in
-                return "[\(result.deviceName)] → 거리: \(String(format: "%.2f", result.distance))m"
+                return "[\(result.deviceName)] → Distance: \(String(format: "%.2f", result.distance))m"
             }
             resultLabel.text = lines.joined(separator: "\n\n")
             statusLabel.isHidden = true
@@ -185,7 +185,7 @@ class RTLSViewController: UIViewController {
     @objc private func stopRtls() {
         statusLabel.isHidden = true
         loadingIndicator.stopAnimating()
-        resultLabel.text = "위치 중지됨"
+        resultLabel.text = "Stopped"
 
         growSpaceUWBSDK.stopUWBRanging(onComplete: { _ in })
     }
@@ -193,7 +193,7 @@ class RTLSViewController: UIViewController {
     @objc private func startRtls() {
         statusLabel.isHidden = false
         loadingIndicator.startAnimating()
-        resultLabel.text = "위치 지정 중..."
+        resultLabel.text = "Positioning..."
 
         growSpaceUWBSDK.startUWBRanging(
             onUpdate: { [weak self] result in
@@ -305,7 +305,7 @@ class RTLSViewController: UIViewController {
 
         // ✅ 내 위치 점 추가
         if let current = viewModel.currentRtlsLocation {
-            addDotOnGrid(name: "내 위치", at: current, cellSize: cellSize, color: .blue)
+            addDotOnGrid(name: "My Position", at: current, cellSize: cellSize, color: .blue)
         }
     }
     

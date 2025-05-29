@@ -13,7 +13,7 @@ class ViewController: UIViewController {
     
     private let rangeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("거리 측정", for: .normal)
+        button.setTitle("distance measurement", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 10
