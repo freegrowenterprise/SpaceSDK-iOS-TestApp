@@ -29,14 +29,6 @@ class RangeViewController: UIViewController {
         return view
     }()
     
-    private let appBarTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Space UWB Scanner"
-        label.font = .boldSystemFont(ofSize: 18)
-        label.textColor = .black
-        return label
-    }()
-    
     private let divider: UIView = {
         let view = UIView()
         view.backgroundColor = .lightGray
@@ -142,35 +134,17 @@ class RangeViewController: UIViewController {
         self.setupActions()
         self.setupMaxConnectionMenu()
         self.setupKeyboardDismissGesture()
+        self.navigationItem.title = "Space UWB Scanner"
     }
     
     private func setupLayout() {
-        view.addSubview(appBarView)
-        appBarView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(48)
-        }
-        
-        appBarView.addSubview(appBarTitleLabel)
-        appBarTitleLabel.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview()
-        }
-        
-        view.addSubview(divider)
-        divider.snp.makeConstraints {
-            $0.top.equalTo(appBarView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(1)
-        }
-        
         let configStack = UIStackView()
         configStack.axis = .vertical
         configStack.spacing = 20
         configStack.alignment = .fill
         view.addSubview(configStack)
         configStack.snp.makeConstraints {
-            $0.top.equalTo(divider.snp.bottom).offset(12)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(12)
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
