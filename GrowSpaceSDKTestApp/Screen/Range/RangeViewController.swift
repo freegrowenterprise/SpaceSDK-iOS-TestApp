@@ -45,13 +45,13 @@ class RangeViewController: UIViewController {
     
     private let maxConnectionsLabel: UILabel = {
         let label = UILabel()
-        label.text = "최대 연결 개수 설정"
+        label.text = "maximum connections"
         return label
     }()
     
     private let maxConnectionsButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("최대 연결 수: 4", for: .normal)
+        button.setTitle("maximum: 4", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
         button.showsMenuAsPrimaryAction = true
         return button
@@ -59,7 +59,7 @@ class RangeViewController: UIViewController {
     
     private let explainMaxConnectionText: UILabel = {
         let label = UILabel()
-        label.text = "7개 이상 동시 연결시 OS 내부적으로 충돌이 발생합니다."
+        label.text = "When more than seven concurrent connections occur, the OS internally collides."
         label.textColor = .lightGray
         label.font = .systemFont(ofSize: 13)
         label.numberOfLines = 0
@@ -68,14 +68,14 @@ class RangeViewController: UIViewController {
     
     private let distanceLabel: UILabel = {
         let label = UILabel()
-        label.text = "최대 연결 거리 설정 (m)"
+        label.text = "maximum connection distance (m)"
         return label
     }()
     
     private let distanceTextField: UITextField = {
         let textField = UITextField()
         textField.borderStyle = .roundedRect
-        textField.placeholder = "예: 5.0"
+        textField.placeholder = "example: 5.0"
         textField.keyboardType = .decimalPad
         textField.textAlignment = .right
         textField.text = "8.0"
@@ -84,7 +84,7 @@ class RangeViewController: UIViewController {
     
     private let explainDistanceText: UILabel = {
         let label = UILabel()
-        label.text = "설정 거리에서 초과되었을 때 연결을 끊고 새로운 장치 연결을 시도합니다."
+        label.text = "If you exceed the set distance, disconnect and connect to a new device."
         label.textColor = .lightGray
         label.font = .systemFont(ofSize: 13)
         label.numberOfLines = 0
@@ -93,13 +93,13 @@ class RangeViewController: UIViewController {
     
     private let rssiConditionLabel: UILabel = {
         let label = UILabel()
-        label.text = "신호 강한 순 우선 연결 설정"
+        label.text = "RSSI Priority Connection Settings"
         return label
     }()
     
     private let explainConnectText: UILabel = {
         let label = UILabel()
-        label.text = "RSSI가 가장 큰 UWB 장치부터 연결을 시도합니다."
+        label.text = "Attempt to connect UWB devices with the largest RSSI sequentially."
         label.textColor = .lightGray
         label.font = .systemFont(ofSize: 13)
         label.numberOfLines = 0
@@ -270,7 +270,7 @@ class RangeViewController: UIViewController {
         let actions = (1...6).map { count in
             UIAction(title: "\(count)", handler: { [weak self] _ in
                 self?.maximumConnectionCount = count
-                self?.maxConnectionsButton.setTitle("최대 연결 수: \(count)", for: .normal)
+                self?.maxConnectionsButton.setTitle("maximum: \(count)", for: .normal)
             })
         }
         let menu = UIMenu(title: "", options: .displayInline, children: actions)
@@ -393,9 +393,9 @@ class RangeViewController: UIViewController {
     }
     
     func showDemoModeAlert() {
-        let alert = UIAlertController(title: "체험 모드 실행", message: "장치 연결이 감지되지 않았습니다. 체험 버전을 실행하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "실행", style: .default, handler: { [weak self] _ in
+        let alert = UIAlertController(title: "Run Experience Mode", message: "Device connection was not detected. Do you want to run the experience version?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
             self?.startDemoMode()
             self?.demoModeTimer?.invalidate()
             self?.growSpaceUWBSDK.stopUWBRanging { result in
