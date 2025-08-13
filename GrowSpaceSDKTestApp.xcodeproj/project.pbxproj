@@ -807,7 +807,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/freegrowenterprise/SpaceSDK-iOS/";
 			requirement = {
-				branch = master;
+				branch = develop;
 				kind = branch;
 			};
 		};

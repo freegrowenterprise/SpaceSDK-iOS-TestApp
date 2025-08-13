@@ -14,7 +14,8 @@ import ActivityKit
 class RangeViewController: UIViewController {
     private let growSpaceUWBSDK = GrowSpaceSDK()
     private var maximumConnectionCount: Int = 4
-    private var maximumConnectionDistance: Float = 8.0
+    private var maximumConnectionDistance: Float = 80.0
+    private var uwbUpdateTimeoutSeconds: Int = 5
     
     var rangingStarted = false
     var demoModeTimer: Timer?
@@ -51,7 +52,34 @@ class RangeViewController: UIViewController {
     
     private let explainMaxConnectionText: UILabel = {
         let label = UILabel()
-        label.text = "When more than seven concurrent connections occur, the OS internally collides."
+        label.text = "OS collision occurs with 7+ connections"
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 12)
+        label.numberOfLines = 1
+        return label
+    }()
+    
+    private let dealyRemoveLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Set automatic deletion time in case of delay (S)"
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.7
+        return label
+    }()
+    
+    private let dealyRemoveTextField: UITextField = {
+        let textField = UITextField()
+        textField.borderStyle = .roundedRect
+        textField.placeholder = "example: 5"
+        textField.keyboardType = .decimalPad
+        textField.textAlignment = .right
+        textField.text = "5"
+        return textField
+    }()
+    
+    private let explainDelayRemoveText: UILabel = {
+        let label = UILabel()
+        label.text = "Time to automatically disconnect when the distance update stops abnormally."
         label.textColor = .lightGray
         label.font = .systemFont(ofSize: 13)
         label.numberOfLines = 0
@@ -70,7 +98,7 @@ class RangeViewController: UIViewController {
         textField.placeholder = "example: 5.0"
         textField.keyboardType = .decimalPad
         textField.textAlignment = .right
-        textField.text = "8.0"
+        textField.text = "80.0"
         return textField
     }()
     
@@ -167,12 +195,35 @@ class RangeViewController: UIViewController {
         maxConnectionGroup.addArrangedSubview(explainMaxConnectionText)
         configStack.addArrangedSubview(maxConnectionGroup)
         
+        let delayRemoveRow = UIStackView()
+        delayRemoveRow.axis = .horizontal
+        delayRemoveRow.spacing = 8
+        delayRemoveRow.alignment = .center
+        delayRemoveRow.addArrangedSubview(dealyRemoveLabel)
+        delayRemoveRow.addArrangedSubview(dealyRemoveTextField)
+        
+        dealyRemoveTextField.snp.makeConstraints {
+            $0.width.equalTo(80)
+        }
+        
+        let delayRemoveGroup = UIStackView()
+        delayRemoveGroup.axis = .vertical
+        delayRemoveGroup.spacing = 4
+        delayRemoveGroup.alignment = .fill
+        delayRemoveGroup.addArrangedSubview(delayRemoveRow)
+        delayRemoveGroup.addArrangedSubview(explainDelayRemoveText)
+        configStack.addArrangedSubview(delayRemoveGroup)
+        
         let distanceRow = UIStackView()
         distanceRow.axis = .horizontal
         distanceRow.spacing = 8
         distanceRow.alignment = .center
         distanceRow.addArrangedSubview(distanceLabel)
         distanceRow.addArrangedSubview(distanceTextField)
+        
+        distanceTextField.snp.makeConstraints {
+            $0.width.equalTo(80)
+        }
         
         let distanceGroup = UIStackView()
         distanceGroup.axis = .vertical
@@ -238,6 +289,7 @@ class RangeViewController: UIViewController {
         //        uwbStartButton.addTarget(self, action: #selector(startLiveActivity), for: .touchUpInside)
         uwbStopButton.addTarget(self, action: #selector(stopUWBScan), for: .touchUpInside)
         distanceTextField.addTarget(self, action: #selector(distanceTextFieldDidChange), for: .editingChanged)
+        dealyRemoveTextField.addTarget(self, action: #selector(delayRemoveTextFieldDidChange), for: .editingChanged)
     }
     
     private func setupMaxConnectionMenu() {
@@ -268,6 +320,13 @@ class RangeViewController: UIViewController {
         }
     }
     
+    @objc private func delayRemoveTextFieldDidChange(_ textField: UITextField) {
+        if let text = textField.text,
+           let value = Int(text) {
+            uwbUpdateTimeoutSeconds = value
+        }
+    }
+    
     
     @objc private func startUWBScan() {
         LiveActivityManager.shared.start()
@@ -286,6 +345,7 @@ class RangeViewController: UIViewController {
         growSpaceUWBSDK.startUWBRanging(
             maximumConnectionCount: self.maximumConnectionCount,
             replacementDistanceThreshold: self.maximumConnectionDistance,
+            uwbUpdateTimeoutSeconds: self.uwbUpdateTimeoutSeconds,
             onUpdate: { [weak self] result in
                 guard let self = self else { return }
                 
@@ -340,7 +400,23 @@ class RangeViewController: UIViewController {
                     }
                 }
             },
-            onDisconnect: { _ in
+            onDisconnect: { [weak self] result in
+                guard let self = self else { return }
+                print("연결 끊어진 장치 이름 : \(result.deviceName)")
+                print("연결 끊어짐 : \(result.disConnectType) time : \(Date.now)")
+                
+                // Remove from device distance map
+                self.deviceDistanceMap.removeValue(forKey: result.deviceName)
+                LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
+                
+                // Remove from UI
+                DispatchQueue.main.async {
+                    if let deviceView = self.deviceViews[result.deviceName] {
+                        self.deviceContentStack.removeArrangedSubview(deviceView)
+                        deviceView.removeFromSuperview()
+                        self.deviceViews.removeValue(forKey: result.deviceName)
+                    }
+                }
             }
         )
         
