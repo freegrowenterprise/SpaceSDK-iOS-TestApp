@@ -155,6 +155,16 @@ class RangeViewController: UIViewController {
     private let buttonStackView = UIStackView()
     private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
+    private let noDeviceLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Device was not detected"
+        label.textAlignment = .center
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 16)
+        label.isHidden = false
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -163,6 +173,12 @@ class RangeViewController: UIViewController {
         self.setupMaxConnectionMenu()
         self.setupKeyboardDismissGesture()
         self.navigationItem.title = "Space UWB Scanner"
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopUWBScan()
+        print("viewWillDisappear 실행됨")
     }
     
     private func setupLayout() {
@@ -263,6 +279,7 @@ class RangeViewController: UIViewController {
             $0.height.equalTo(44)
         }
         
+        
         buttonStackView.axis = .horizontal
         buttonStackView.spacing = 12
         buttonStackView.distribution = .fillEqually
@@ -281,6 +298,11 @@ class RangeViewController: UIViewController {
             $0.top.equalTo(configStack.snp.bottom).offset(12)
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.bottom.equalTo(buttonStackView.snp.top).offset(-12)
+        }
+        
+        deviceScrollView.addSubview(noDeviceLabel)
+        noDeviceLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
@@ -327,17 +349,22 @@ class RangeViewController: UIViewController {
         }
     }
     
+    private func updateNoDeviceLabel() {
+        noDeviceLabel.isHidden = !deviceViews.isEmpty
+    }
+    
     
     @objc private func startUWBScan() {
-        LiveActivityManager.shared.start()
+//        LiveActivityManager.shared.start()
         self.deviceViews.removeAll()
         self.deviceContentStack.arrangedSubviews.forEach { view in
-            if view !== loadingIndicator {
+            if view !== loadingIndicator && view !== noDeviceLabel {
                 self.deviceContentStack.removeArrangedSubview(view)
                 view.removeFromSuperview()
             }
         }
         
+        updateNoDeviceLabel()
         loadingIndicator.startAnimating()
         
 //        print("UWB 연결 시작 : \(Activity<SpaceUWBLiveKitAttributes>.activities.first?.activityState)")
@@ -357,7 +384,7 @@ class RangeViewController: UIViewController {
                 
                 self.deviceDistanceMap[result.deviceName] = result.distance
                 
-                LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
+//                LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
 
                 DispatchQueue.main.async {
                     self.loadingIndicator.stopAnimating()
@@ -398,6 +425,8 @@ class RangeViewController: UIViewController {
                         self.deviceContentStack.addArrangedSubview(container)
                         self.deviceViews[name] = container
                     }
+                    
+                    self.updateNoDeviceLabel()
                 }
             },
             onDisconnect: { [weak self] result in
@@ -407,7 +436,7 @@ class RangeViewController: UIViewController {
                 
                 // Remove from device distance map
                 self.deviceDistanceMap.removeValue(forKey: result.deviceName)
-                LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
+//                LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
                 
                 // Remove from UI
                 DispatchQueue.main.async {
@@ -416,6 +445,8 @@ class RangeViewController: UIViewController {
                         deviceView.removeFromSuperview()
                         self.deviceViews.removeValue(forKey: result.deviceName)
                     }
+                    
+                    self.updateNoDeviceLabel()
                 }
             }
         )
@@ -423,6 +454,10 @@ class RangeViewController: UIViewController {
         self.demoModeTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             if !self.rangingStarted {
+                DispatchQueue.main.async {
+                    self.loadingIndicator.stopAnimating()
+                    self.updateNoDeviceLabel()
+                }
                 self.showDemoModeAlert()
             }
         }
@@ -430,8 +465,9 @@ class RangeViewController: UIViewController {
     }
     
     @objc private func stopUWBScan() {
-        LiveActivityManager.shared.stop()
+//        LiveActivityManager.shared.stop()
         self.demoModeTimer?.invalidate()
+        updateNoDeviceLabel()
         growSpaceUWBSDK.stopUWBRanging { result in
             switch result {
             case .success:
@@ -472,7 +508,7 @@ class RangeViewController: UIViewController {
             let randomDistance = Float.random(in: 0.5...5.0)
             
             self.deviceDistanceMap[fakeDeviceName] = randomDistance
-            LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
+//            LiveActivityManager.shared.updateDeviceDistanceMap(self.deviceDistanceMap)
             
             DispatchQueue.main.async {
                 self.loadingIndicator.stopAnimating()
@@ -512,6 +548,8 @@ class RangeViewController: UIViewController {
                     self.deviceContentStack.addArrangedSubview(container)
                     self.deviceViews[fakeDeviceName] = container
                 }
+                
+                self.updateNoDeviceLabel()
             }
         }
     }
