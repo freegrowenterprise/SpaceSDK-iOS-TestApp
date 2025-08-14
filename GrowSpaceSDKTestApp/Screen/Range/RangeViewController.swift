@@ -19,6 +19,7 @@ class RangeViewController: UIViewController {
     
     var rangingStarted = false
     var demoModeTimer: Timer?
+    var isScanning = false
     
     var deviceDistanceMap: [String: Float] = [:]
     
@@ -173,6 +174,7 @@ class RangeViewController: UIViewController {
         self.setupMaxConnectionMenu()
         self.setupKeyboardDismissGesture()
         self.navigationItem.title = "Space UWB Scanner"
+        self.updateButtonStates()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -353,9 +355,22 @@ class RangeViewController: UIViewController {
         noDeviceLabel.isHidden = !deviceViews.isEmpty
     }
     
+    private func updateButtonStates() {
+        uwbStartButton.isEnabled = !isScanning
+        uwbStopButton.isEnabled = isScanning
+        
+        uwbStartButton.backgroundColor = isScanning ? .systemGray : .systemBlue
+        uwbStopButton.backgroundColor = isScanning ? .systemRed : .systemGray
+    }
+    
     
     @objc private func startUWBScan() {
+        guard !isScanning else { return }
+        
 //        LiveActivityManager.shared.start()
+        isScanning = true
+        updateButtonStates()
+        
         self.deviceViews.removeAll()
         self.deviceContentStack.arrangedSubviews.forEach { view in
             if view !== loadingIndicator && view !== noDeviceLabel {
@@ -465,7 +480,13 @@ class RangeViewController: UIViewController {
     }
     
     @objc private func stopUWBScan() {
+        guard isScanning else { return }
+        
 //        LiveActivityManager.shared.stop()
+        isScanning = false
+        updateButtonStates()
+        loadingIndicator.stopAnimating()
+        
         self.demoModeTimer?.invalidate()
         updateNoDeviceLabel()
         growSpaceUWBSDK.stopUWBRanging { result in
@@ -484,6 +505,8 @@ class RangeViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
             self?.startDemoMode()
             self?.demoModeTimer?.invalidate()
+            self?.isScanning = false
+            self?.updateButtonStates()
             self?.growSpaceUWBSDK.stopUWBRanging { result in
                 switch result {
                 case .success:
