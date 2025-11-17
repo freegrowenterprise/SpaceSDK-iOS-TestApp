@@ -199,7 +199,20 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
             return
         }
         discoveredDevices.append(peripheral)
-        addDevice(name: name, x: 0.0, y: 0.0)
+
+        // 고정된 앵커 위치 설정
+        let (fixedX, fixedY): (Double, Double) = {
+            switch name {
+            case "FGU-1096": return (1.0, 1.0)
+            case "FGU-1097": return (21.0, 1.0)
+            case "FGU-1098": return (21.0, 21.0)
+            case "FGU-1099": return (1.0, 21.0)
+            default: return (0.0, 0.0)
+            }
+        }()
+
+        addDevice(name: name, x: fixedX, y: fixedY)
+        viewModel.setCoordinate(macAddress: name, x: CGFloat(fixedX), y: CGFloat(fixedY))
         scanStatusLabel.text = "Discovered Devices: \(discoveredDevices.count)"
     }
 

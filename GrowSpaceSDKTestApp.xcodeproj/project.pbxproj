@@ -241,6 +241,7 @@
 			packageProductDependencies = (
 				EEBB92432D83EEA20047DEF2 /* SnapKit */,
 				EE86ECEE2DBA188200F8AE21 /* GrowSpaceSDK */,
+				EEC32FBF2EC9B3000092B62C /* CocoaMQTT */,
 			);
 			productName = GrowSpaceSDKTestApp;
 			productReference = EEBB92062D83C9720047DEF2 /* GrowSpaceSDKTestApp.app */;
@@ -330,6 +331,7 @@
 			packageReferences = (
 				EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */,
+				EEC32FBE2EC9B2EB0092B62C /* XCRemoteSwiftPackageReference "CocoaMQTT" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EEBB92072D83C9720047DEF2 /* Products */;
@@ -819,6 +821,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		EEC32FBE2EC9B2EB0092B62C /* XCRemoteSwiftPackageReference "CocoaMQTT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/emqx/CocoaMQTT";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.9;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -826,6 +836,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */;
 			productName = GrowSpaceSDK;
+		};
+		EEC32FBF2EC9B3000092B62C /* CocoaMQTT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EEC32FBE2EC9B2EB0092B62C /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
+			productName = CocoaMQTT;
 		};
 		EEBB92432D83EEA20047DEF2 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
