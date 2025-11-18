@@ -196,13 +196,35 @@ class RTLSViewController: UIViewController {
 
         var lastMqttPublishTime: Date?
         let mqttPublishInterval: TimeInterval = 0.1  // 100ms = 10Hz
+        var anchorLastUpdateTime: [String: Date] = [:]  // 각 앵커의 마지막 업데이트 시각
+
+        // 1초마다 오래된 앵커 제거
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            let now = Date()
+
+            // 1초 이상 업데이트 안 된 앵커 제거
+            for (anchorId, lastUpdate) in anchorLastUpdateTime {
+                if now.timeIntervalSince(lastUpdate) > 1.0 {
+                    self.uwbResults.removeValue(forKey: anchorId)
+                    anchorLastUpdateTime.removeValue(forKey: anchorId)
+                }
+            }
+
+            // 앵커가 3개 미만이면 좌표 삭제
+            if self.uwbResults.count < 3 {
+                self.viewModel.setCurrentLocation(nil)
+            }
+        }
 
         // UWB Ranging 시작
         growSpaceUWBSDK.startUWBRanging(
+            replacementDistanceThreshold: 80.0,
             onUpdate: { [weak self] result in
                 DispatchQueue.main.async {
                     guard let self = self else { return }
                     self.uwbResults[result.deviceName] = result
+                    anchorLastUpdateTime[result.deviceName] = Date()  // 업데이트 시각 기록
                     self.updateLabels()
 
                     // MQTT: 앵커 간 거리 전송 (각 앵커마다 개별 전송)
@@ -213,7 +235,10 @@ class RTLSViewController: UIViewController {
                     )
 
                     // 앵커가 3개 이상이면 RTLS 계산
-                    guard self.uwbResults.count >= 3 else { return }
+                    guard self.uwbResults.count >= 3 else {
+                        self.viewModel.setCurrentLocation(nil)
+                        return
+                    }
 
                     let anchors = self.convertToAnchorResults(
                         from: self.uwbResults,

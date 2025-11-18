@@ -24,7 +24,7 @@ class DeviceCoordinateViewModel {
     }
 
     // MARK: - 현재 위치 업데이트
-    func setCurrentLocation(_ point: CGPoint) {
+    func setCurrentLocation(_ point: CGPoint?) {
         currentRtlsLocation = point
     }
 
