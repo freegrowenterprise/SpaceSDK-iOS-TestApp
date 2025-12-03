@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import GrowSpacePrivateSDK
 import GrowSpaceSDK
+import CoreMotion
 
 class RTLSViewController: UIViewController {
     private let viewModel: DeviceCoordinateViewModel
@@ -19,6 +20,17 @@ class RTLSViewController: UIViewController {
     private var deviceId: String {
         return UIDevice.current.identifierForVendor?.uuidString ?? "iOS-Unknown"
     }
+
+    // 위치 히스토리 및 추정 관련
+    private var positionHistory: [(position: CGPoint, timestamp: Date)] = []
+    private let maxHistoryCount = 10
+    private var lastEstimationStartTime: Date?
+    private var lastThreeAnchorTime: Date?  // 마지막으로 3개 앵커였던 시각
+
+    // IMU 센서 관련
+    private let motionManager = CMMotionManager()
+    private var currentHeading: Double = 0.0  // 현재 진행 방향 (라디안)
+    private var isMoving: Bool = false  // 이동 중 여부
 
     private let scrollView = UIScrollView()
     private let contentView = UIStackView()
@@ -188,11 +200,19 @@ class RTLSViewController: UIViewController {
         coordinateLabel.text = "Coordinate: -"
 
         growSpaceUWBSDK.stopUWBRanging(onComplete: { _ in })
+        stopIMUSensors()  // IMU 센서 중지
     }
 
     @objc private func startRtls() {
         statusLabel.text = "Starting..."
         loadingIndicator.startAnimating()
+
+        // IMU 센서 시작
+        startIMUSensors()
+
+        // 히스토리 초기화
+        positionHistory.removeAll()
+        lastEstimationStartTime = nil
 
         var lastMqttPublishTime: Date?
         let mqttPublishInterval: TimeInterval = 0.1  // 100ms = 10Hz
@@ -203,17 +223,12 @@ class RTLSViewController: UIViewController {
             guard let self = self else { return }
             let now = Date()
 
-            // 1초 이상 업데이트 안 된 앵커 제거
+            // 2초 이상 업데이트 안 된 앵커 제거
             for (anchorId, lastUpdate) in anchorLastUpdateTime {
-                if now.timeIntervalSince(lastUpdate) > 1.0 {
+                if now.timeIntervalSince(lastUpdate) > 2.0 {
                     self.uwbResults.removeValue(forKey: anchorId)
                     anchorLastUpdateTime.removeValue(forKey: anchorId)
                 }
-            }
-
-            // 앵커가 3개 미만이면 좌표 삭제
-            if self.uwbResults.count < 3 {
-                self.viewModel.setCurrentLocation(nil)
             }
         }
 
@@ -234,37 +249,87 @@ class RTLSViewController: UIViewController {
                         distance: result.distance
                     )
 
-                    // 앵커가 3개 이상이면 RTLS 계산
-                    guard self.uwbResults.count >= 3 else {
-                        self.viewModel.setCurrentLocation(nil)
-                        return
-                    }
-
+                    let anchorCount = self.uwbResults.count
                     let anchors = self.convertToAnchorResults(
                         from: self.uwbResults,
                         coordinates: self.viewModel.deviceCoordinates
                     )
 
-                    self.growSpaceRTLS.startUwbRtls(
-                        anchors: anchors,
-                        onResult: { location in
-                            DispatchQueue.main.async {
-                                self.viewModel.setCurrentLocation(CGPoint(x: location.x, y: location.y))
-                                self.updateLabels()
+                    var estimatedPosition: CGPoint?
+                    var usedAnchorCount = 0
 
-                                // MQTT: 실시간 좌표 전송 (10Hz throttle)
-                                let now = Date()
-                                if lastMqttPublishTime == nil || now.timeIntervalSince(lastMqttPublishTime!) >= mqttPublishInterval {
-                                    self.mqttManager.publishCoordinate(
-                                        deviceId: self.deviceId,
-                                        x: location.x,
-                                        y: location.y
-                                    )
-                                    lastMqttPublishTime = now
+                    // 앵커 개수별 처리
+                    if anchorCount >= 3 {
+                        // [3개 이상] 정상 RTLS 삼변측량
+                        self.lastEstimationStartTime = nil  // 추정 모드 종료
+                        self.lastThreeAnchorTime = Date()  // 3개 앵커 시각 기록
+
+                        self.growSpaceRTLS.startUwbRtls(
+                            anchors: anchors,
+                            onResult: { location in
+                                DispatchQueue.main.async {
+                                    let position = CGPoint(x: location.x, y: location.y)
+                                    self.viewModel.setCurrentLocation(position)
+                                    self.addPositionToHistory(position)
+                                    self.updateLabels()
+
+                                    // MQTT: 실시간 좌표 전송 (10Hz throttle)
+                                    let now = Date()
+                                    if lastMqttPublishTime == nil || now.timeIntervalSince(lastMqttPublishTime!) >= mqttPublishInterval {
+                                        self.mqttManager.publishCoordinate(
+                                            deviceId: self.deviceId,
+                                            x: Float(location.x),
+                                            y: Float(location.y),
+                                            anchorCount: anchorCount
+                                        )
+                                        lastMqttPublishTime = now
+                                    }
                                 }
                             }
+                        )
+
+                    } else if anchorCount == 2 {
+                        // [2개] 교점 계산 - 3개에서 2개로 전환 시 1초 대기
+                        let now = Date()
+
+                        // 3개 앵커였다가 2개로 줄어든 경우, 1초 대기
+                        if let lastThree = self.lastThreeAnchorTime,
+                           now.timeIntervalSince(lastThree) < 1.0 {
+                            // 1초 안에 다시 3개가 될 수 있으므로 대기
+                            return
                         }
-                    )
+
+                        // 2개 앵커는 시간 제한 없이 계속 유지
+                        let lastPos = self.viewModel.currentRtlsLocation
+                        estimatedPosition = self.calculatePositionWith2Anchors(
+                            anchors: anchors,
+                            lastPosition: lastPos
+                        )
+
+                        if let pos = estimatedPosition {
+                            usedAnchorCount = 2
+                            self.viewModel.setCurrentLocation(pos)
+                            self.updateLabels()
+
+                            // MQTT 전송
+                            let now = Date()
+                            if lastMqttPublishTime == nil || now.timeIntervalSince(lastMqttPublishTime!) >= mqttPublishInterval {
+                                self.mqttManager.publishCoordinate(
+                                    deviceId: self.deviceId,
+                                    x: Float(pos.x),
+                                    y: Float(pos.y),
+                                    anchorCount: 2
+                                )
+                                lastMqttPublishTime = now
+                            }
+                        } else {
+                            self.viewModel.setCurrentLocation(nil)
+                        }
+
+                    } else {
+                        // [1개 이하] 좌표 삭제
+                        self.viewModel.setCurrentLocation(nil)
+                    }
                 }
             },
             onDisconnect: { _ in
@@ -293,5 +358,141 @@ class RTLSViewController: UIViewController {
                 distance: Double(result.distance)
             )
         }
+    }
+
+    // MARK: - 위치 히스토리 관리
+    private func addPositionToHistory(_ position: CGPoint) {
+        let now = Date()
+        positionHistory.append((position: position, timestamp: now))
+
+        // 최대 개수 유지
+        if positionHistory.count > maxHistoryCount {
+            positionHistory.removeFirst()
+        }
+    }
+
+    // 속도 벡터 계산 (m/s)
+    private func calculateVelocity() -> CGPoint? {
+        guard positionHistory.count >= 2 else { return nil }
+
+        let recent = positionHistory.suffix(5)  // 최근 5개
+        guard recent.count >= 2 else { return nil }
+
+        let latest = recent.last!
+        let oldest = recent.first!
+
+        let timeDiff = latest.timestamp.timeIntervalSince(oldest.timestamp)
+        guard timeDiff > 0 else { return nil }
+
+        let dx = latest.position.x - oldest.position.x
+        let dy = latest.position.y - oldest.position.y
+
+        return CGPoint(x: dx / timeDiff, y: dy / timeDiff)
+    }
+
+    // MARK: - 2개 앵커: 교점 계산 (속도 벡터 + IMU 활용)
+    private func calculatePositionWith2Anchors(
+        anchors: [RTLSAnchorResult],
+        lastPosition: CGPoint?
+    ) -> CGPoint? {
+        guard anchors.count == 2 else { return nil }
+
+        let a1 = anchors[0]
+        let a2 = anchors[1]
+
+        let x1 = a1.x, y1 = a1.y, r1 = a1.distance
+        let x2 = a2.x, y2 = a2.y, r2 = a2.distance
+
+        // 두 원의 교점 계산
+        let d = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
+
+        // 원이 너무 멀거나 겹치지 않으면 실패
+        if d > r1 + r2 || d < abs(r1 - r2) || d == 0 {
+            return nil
+        }
+
+        let a = (r1 * r1 - r2 * r2 + d * d) / (2 * d)
+        let h = sqrt(r1 * r1 - a * a)
+
+        let px = x1 + a * (x2 - x1) / d
+        let py = y1 + a * (y2 - y1) / d
+
+        // 두 교점
+        let intersection1 = CGPoint(
+            x: px + h * (y2 - y1) / d,
+            y: py - h * (x2 - x1) / d
+        )
+        let intersection2 = CGPoint(
+            x: px - h * (y2 - y1) / d,
+            y: py + h * (x2 - x1) / d
+        )
+
+        // 교점 선택: 마지막 위치에서 가장 가까운 점 선택
+        if let last = lastPosition {
+            let dist1 = distance(from: last, to: intersection1)
+            let dist2 = distance(from: last, to: intersection2)
+            return dist1 < dist2 ? intersection1 : intersection2
+        }
+
+        // 마지막 위치가 없으면 첫 번째 교점
+        return intersection1
+    }
+
+    // MARK: - 1개 앵커: Dead Reckoning
+    private func calculatePositionWith1Anchor(
+        timeSinceEstimationStart: TimeInterval,
+        lastPosition: CGPoint?,
+        velocity: CGPoint?
+    ) -> CGPoint? {
+        guard let last = lastPosition, let vel = velocity else { return nil }
+
+        // 최대 2초까지만
+        if timeSinceEstimationStart > 2.0 {
+            return nil
+        }
+
+        // 마지막 위치 + 속도 * 시간
+        return CGPoint(
+            x: last.x + vel.x * timeSinceEstimationStart,
+            y: last.y + vel.y * timeSinceEstimationStart
+        )
+    }
+
+    // 두 점 사이 거리
+    private func distance(from p1: CGPoint, to p2: CGPoint) -> Double {
+        let dx = p2.x - p1.x
+        let dy = p2.y - p1.y
+        return sqrt(Double(dx * dx + dy * dy))
+    }
+
+    // MARK: - IMU 센서 관리
+    private func startIMUSensors() {
+        guard motionManager.isDeviceMotionAvailable else {
+            print("⚠️ Device Motion not available")
+            return
+        }
+
+        motionManager.deviceMotionUpdateInterval = 0.1  // 10Hz
+        motionManager.startDeviceMotionUpdates(to: .main) { [weak self] (motion, error) in
+            guard let self = self, let motion = motion else { return }
+
+            // 자이로: 회전 방향 추적
+            let rotationRate = motion.rotationRate
+            // z축 회전을 누적해서 현재 방향 계산
+            self.currentHeading += rotationRate.z * 0.1
+
+            // 가속도: 이동 여부 감지
+            let userAccel = motion.userAcceleration
+            let accelMagnitude = sqrt(userAccel.x * userAccel.x + userAccel.y * userAccel.y + userAccel.z * userAccel.z)
+
+            // 일정 가속도 이상이면 이동 중으로 판단
+            self.isMoving = accelMagnitude > 0.1
+        }
+    }
+
+    private func stopIMUSensors() {
+        motionManager.stopDeviceMotionUpdates()
+        isMoving = false
+        currentHeading = 0.0
     }
 }
