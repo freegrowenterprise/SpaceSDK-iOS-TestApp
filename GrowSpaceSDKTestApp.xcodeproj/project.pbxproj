@@ -11,6 +11,8 @@
 		EE86ED122DC0632000F8AE21 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE697CE22D8CF77000144CAF /* WidgetKit.framework */; };
 		EE86ED132DC0632000F8AE21 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE697CE42D8CF77000144CAF /* SwiftUI.framework */; };
 		EE86ED242DC0632100F8AE21 /* SpaceUWBLiveKitExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EE86ED112DC0632000F8AE21 /* SpaceUWBLiveKitExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EEBAFEF92EE00A70000F83B5 /* CocoaMQTT in Frameworks */ = {isa = PBXBuildFile; productRef = EEBAFEF82EE00A70000F83B5 /* CocoaMQTT */; };
+		EEBAFEFB2EE00A70000F83B5 /* CocoaMQTTWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = EEBAFEFA2EE00A70000F83B5 /* CocoaMQTTWebSocket */; };
 		EEBB92442D83EEA20047DEF2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EEBB92432D83EEA20047DEF2 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -140,7 +142,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEBAFEFB2EE00A70000F83B5 /* CocoaMQTTWebSocket in Frameworks */,
 				EEBB92442D83EEA20047DEF2 /* SnapKit in Frameworks */,
+				EEBAFEF92EE00A70000F83B5 /* CocoaMQTT in Frameworks */,
 				EE86ECEF2DBA188200F8AE21 /* GrowSpaceSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -241,7 +245,8 @@
 			packageProductDependencies = (
 				EEBB92432D83EEA20047DEF2 /* SnapKit */,
 				EE86ECEE2DBA188200F8AE21 /* GrowSpaceSDK */,
-				EEC32FBF2EC9B3000092B62C /* CocoaMQTT */,
+				EEBAFEF82EE00A70000F83B5 /* CocoaMQTT */,
+				EEBAFEFA2EE00A70000F83B5 /* CocoaMQTTWebSocket */,
 			);
 			productName = GrowSpaceSDKTestApp;
 			productReference = EEBB92062D83C9720047DEF2 /* GrowSpaceSDKTestApp.app */;
@@ -331,7 +336,7 @@
 			packageReferences = (
 				EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */,
-				EEC32FBE2EC9B2EB0092B62C /* XCRemoteSwiftPackageReference "CocoaMQTT" */,
+				EEBAFEF72EE009C3000F83B5 /* XCRemoteSwiftPackageReference "CocoaMQTT" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EEBB92072D83C9720047DEF2 /* Products */;
@@ -813,20 +818,20 @@
 				kind = branch;
 			};
 		};
+		EEBAFEF72EE009C3000F83B5 /* XCRemoteSwiftPackageReference "CocoaMQTT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/emqx/CocoaMQTT.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.9;
+			};
+		};
 		EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.7.1;
-			};
-		};
-		EEC32FBE2EC9B2EB0092B62C /* XCRemoteSwiftPackageReference "CocoaMQTT" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/emqx/CocoaMQTT";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.1.9;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -837,10 +842,15 @@
 			package = EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */;
 			productName = GrowSpaceSDK;
 		};
-		EEC32FBF2EC9B3000092B62C /* CocoaMQTT */ = {
+		EEBAFEF82EE00A70000F83B5 /* CocoaMQTT */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EEC32FBE2EC9B2EB0092B62C /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
+			package = EEBAFEF72EE009C3000F83B5 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
 			productName = CocoaMQTT;
+		};
+		EEBAFEFA2EE00A70000F83B5 /* CocoaMQTTWebSocket */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EEBAFEF72EE009C3000F83B5 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
+			productName = CocoaMQTTWebSocket;
 		};
 		EEBB92432D83EEA20047DEF2 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

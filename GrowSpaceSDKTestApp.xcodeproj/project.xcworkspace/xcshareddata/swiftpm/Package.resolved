@@ -1,10 +1,10 @@
 {
-  "originHash" : "a12f4a095534bea03c6f542daab2b0310dbd58814c0b1c6559e7890bb58c3159",
+  "originHash" : "6b1dbcc0618b0a93dc0d052205b3d437aa6dffa932aab57a176939a9b0e8a15a",
   "pins" : [
     {
       "identity" : "cocoamqtt",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/emqx/CocoaMQTT",
+      "location" : "https://github.com/emqx/CocoaMQTT.git",
       "state" : {
         "revision" : "22b98acc75bdca77917a1093bd3e1b45ef6e9718",
         "version" : "2.1.9"
