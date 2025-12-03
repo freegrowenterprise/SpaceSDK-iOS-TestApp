@@ -78,7 +78,7 @@ class MQTTManager: NSObject {
     }
 
     // 좌표 데이터 전송
-    func publishCoordinate(deviceId: String, x: Double, y: Double, accuracy: Double? = nil) {
+    func publishCoordinate(deviceId: String, x: Float, y: Float, accuracy: Double? = nil, anchorCount: Int) {
         guard isConnected, let mqtt = mqtt else {
             return
         }
@@ -88,7 +88,8 @@ class MQTTManager: NSObject {
             "deviceId": deviceId,
             "x": x,
             "y": y,
-            "timestamp": timestamp
+            "timestamp": timestamp,
+            "anchorCount": anchorCount
         ]
 
         // accuracy가 있으면 추가
