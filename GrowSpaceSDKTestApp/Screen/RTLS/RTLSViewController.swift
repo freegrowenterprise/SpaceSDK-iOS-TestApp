@@ -32,6 +32,12 @@ class RTLSViewController: UIViewController {
     private var currentHeading: Double = 0.0  // 현재 진행 방향 (라디안)
     private var isMoving: Bool = false  // 이동 중 여부
 
+    // Low Pass Filter 관련 (앵커 거리 MQTT 전송용)
+    private var filteredDistances: [String: Float] = [:]  // 앵커별 필터링된 거리
+    private let distanceFilterAlpha: Float = 0.3  // LPF alpha (0.0~1.0, 낮을수록 스무딩 강함)
+    private var isDistanceMqttRunning: Bool = false  // 거리 MQTT 전송 활성화 여부
+    private var activeAnchorTimers: Set<String> = []  // 타이머가 돌고 있는 앵커 ID
+
     private let scrollView = UIScrollView()
     private let contentView = UIStackView()
 
@@ -201,6 +207,7 @@ class RTLSViewController: UIViewController {
 
         growSpaceUWBSDK.stopUWBRanging(onComplete: { _ in })
         stopIMUSensors()  // IMU 센서 중지
+        isDistanceMqttRunning = false  // 거리 MQTT 전송 중지
     }
 
     @objc private func startRtls() {
@@ -213,6 +220,13 @@ class RTLSViewController: UIViewController {
         // 히스토리 초기화
         positionHistory.removeAll()
         lastEstimationStartTime = nil
+
+        // Low Pass Filter 초기화
+        filteredDistances.removeAll()
+
+        // 거리 MQTT 전송 활성화 (앵커별 타이머는 데이터 수신 시 시작)
+        isDistanceMqttRunning = true
+        activeAnchorTimers.removeAll()
 
         var lastMqttPublishTime: Date?
         let mqttPublishInterval: TimeInterval = 0.1  // 100ms = 10Hz
@@ -242,12 +256,19 @@ class RTLSViewController: UIViewController {
                     anchorLastUpdateTime[result.deviceName] = Date()  // 업데이트 시각 기록
                     self.updateLabels()
 
-                    // MQTT: 앵커 간 거리 전송 (각 앵커마다 개별 전송)
-                    self.mqttManager.publishDistance(
-                        deviceId: self.deviceId,
-                        anchorId: result.deviceName,
-                        distance: result.distance
-                    )
+                    // Low Pass Filter 적용 (MQTT 전송은 앵커별 타이머에서 처리)
+                    let anchorId = result.deviceName
+                    let rawDistance = result.distance
+
+                    let previousFiltered = self.filteredDistances[anchorId] ?? rawDistance
+                    let filtered = self.distanceFilterAlpha * rawDistance + (1 - self.distanceFilterAlpha) * previousFiltered
+                    self.filteredDistances[anchorId] = filtered
+
+                    // 해당 앵커의 타이머가 없으면 시작
+                    if !self.activeAnchorTimers.contains(anchorId) {
+                        self.activeAnchorTimers.insert(anchorId)
+                        self.scheduleNextDistanceMqtt(for: anchorId)
+                    }
 
                     let anchorCount = self.uwbResults.count
                     let anchors = self.convertToAnchorResults(
@@ -494,5 +515,34 @@ class RTLSViewController: UIViewController {
         motionManager.stopDeviceMotionUpdates()
         isMoving = false
         currentHeading = 0.0
+    }
+
+    // MARK: - 거리 MQTT 전송 (앵커별 랜덤 간격)
+    private func scheduleNextDistanceMqtt(for anchorId: String) {
+        guard isDistanceMqttRunning, activeAnchorTimers.contains(anchorId) else { return }
+
+        // 랜덤 간격: 65~100ms (약 10~15Hz)
+        let randomInterval = Double.random(in: 0.065...0.100)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + randomInterval) { [weak self] in
+            guard let self = self,
+                  self.isDistanceMqttRunning,
+                  self.activeAnchorTimers.contains(anchorId),
+                  let filteredDistance = self.filteredDistances[anchorId] else {
+                // 앵커가 제거되었으면 타이머 종료
+                self?.activeAnchorTimers.remove(anchorId)
+                return
+            }
+
+            // 해당 앵커의 필터링된 거리 값 전송
+            self.mqttManager.publishDistance(
+                deviceId: self.deviceId,
+                anchorId: anchorId,
+                distance: filteredDistance
+            )
+
+            // 다음 전송 스케줄
+            self.scheduleNextDistanceMqtt(for: anchorId)
+        }
     }
 }
