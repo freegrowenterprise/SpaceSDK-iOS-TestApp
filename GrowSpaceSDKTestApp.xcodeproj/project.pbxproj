@@ -12,7 +12,6 @@
 		EE86ED132DC0632000F8AE21 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE697CE42D8CF77000144CAF /* SwiftUI.framework */; };
 		EE86ED242DC0632100F8AE21 /* SpaceUWBLiveKitExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EE86ED112DC0632000F8AE21 /* SpaceUWBLiveKitExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EEBAFEF92EE00A70000F83B5 /* CocoaMQTT in Frameworks */ = {isa = PBXBuildFile; productRef = EEBAFEF82EE00A70000F83B5 /* CocoaMQTT */; };
-		EEBAFEFB2EE00A70000F83B5 /* CocoaMQTTWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = EEBAFEFA2EE00A70000F83B5 /* CocoaMQTTWebSocket */; };
 		EEBB92442D83EEA20047DEF2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = EEBB92432D83EEA20047DEF2 /* SnapKit */; };
 /* End PBXBuildFile section */
 
@@ -142,7 +141,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEBAFEFB2EE00A70000F83B5 /* CocoaMQTTWebSocket in Frameworks */,
 				EEBB92442D83EEA20047DEF2 /* SnapKit in Frameworks */,
 				EEBAFEF92EE00A70000F83B5 /* CocoaMQTT in Frameworks */,
 				EE86ECEF2DBA188200F8AE21 /* GrowSpaceSDK in Frameworks */,
@@ -246,7 +244,6 @@
 				EEBB92432D83EEA20047DEF2 /* SnapKit */,
 				EE86ECEE2DBA188200F8AE21 /* GrowSpaceSDK */,
 				EEBAFEF82EE00A70000F83B5 /* CocoaMQTT */,
-				EEBAFEFA2EE00A70000F83B5 /* CocoaMQTTWebSocket */,
 			);
 			productName = GrowSpaceSDKTestApp;
 			productReference = EEBB92062D83C9720047DEF2 /* GrowSpaceSDKTestApp.app */;
@@ -846,11 +843,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EEBAFEF72EE009C3000F83B5 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
 			productName = CocoaMQTT;
-		};
-		EEBAFEFA2EE00A70000F83B5 /* CocoaMQTTWebSocket */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EEBAFEF72EE009C3000F83B5 /* XCRemoteSwiftPackageReference "CocoaMQTT" */;
-			productName = CocoaMQTTWebSocket;
 		};
 		EEBB92432D83EEA20047DEF2 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

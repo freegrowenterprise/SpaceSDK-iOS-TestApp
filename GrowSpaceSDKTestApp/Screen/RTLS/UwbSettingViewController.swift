@@ -14,6 +14,9 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
     private var centralManager: CBCentralManager?
     private var discoveredDevices: [CBPeripheral] = []
 
+    // UserDefaults 키
+    private let anchorCoordinatesKey = "savedAnchorCoordinates"
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "BLE Device Settings"
@@ -179,10 +182,29 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
     }
 
     @objc private func saveCoordinates() {
+        // UserDefaults에 좌표 저장
+        var coordinatesToSave: [String: [String: Double]] = [:]
+
         viewModel.deviceCoordinates.forEach { name, coord in
+            coordinatesToSave[name] = ["x": Double(coord.x), "y": Double(coord.y)]
             print("[\(name)] → X=\(coord.x), Y=\(coord.y)")
         }
+
+        UserDefaults.standard.set(coordinatesToSave, forKey: anchorCoordinatesKey)
+        print("앵커 좌표가 저장되었습니다.")
+
         self.navigationController?.popViewController(animated: true)
+    }
+
+    // 저장된 좌표 불러오기
+    private func loadSavedCoordinate(for name: String) -> (x: Double, y: Double)? {
+        guard let saved = UserDefaults.standard.dictionary(forKey: anchorCoordinatesKey) as? [String: [String: Double]],
+              let coord = saved[name],
+              let x = coord["x"],
+              let y = coord["y"] else {
+            return nil
+        }
+        return (x, y)
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -200,19 +222,11 @@ class UwbSettingViewController: UIViewController, CBCentralManagerDelegate {
         }
         discoveredDevices.append(peripheral)
 
-        // 고정된 앵커 위치 설정
-        let (fixedX, fixedY): (Double, Double) = {
-            switch name {
-            case "FGU-1096": return (1.0, 1.0)
-            case "FGU-1097": return (21.0, 1.0)
-            case "FGU-1098": return (21.0, 21.0)
-            case "FGU-1099": return (1.0, 21.0)
-            default: return (0.0, 0.0)
-            }
-        }()
+        // 저장된 좌표가 있으면 불러오고, 없으면 기본값 (0, 0)
+        let (savedX, savedY): (Double, Double) = loadSavedCoordinate(for: name) ?? (0.0, 0.0)
 
-        addDevice(name: name, x: fixedX, y: fixedY)
-        viewModel.setCoordinate(macAddress: name, x: CGFloat(fixedX), y: CGFloat(fixedY))
+        addDevice(name: name, x: savedX, y: savedY)
+        viewModel.setCoordinate(macAddress: name, x: CGFloat(savedX), y: CGFloat(savedY))
         scanStatusLabel.text = "Discovered Devices: \(discoveredDevices.count)"
     }
 
