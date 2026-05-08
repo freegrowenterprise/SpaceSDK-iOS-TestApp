@@ -493,7 +493,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Space UWB";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "이 앱은 백그라운드에서도 UWB 장치와 BLE 통신을 유지하기 위해 Bluetooth 권한이 필요합니다.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "UWB 장치와의 BLE 연결을 위해 이 권한이 필요합니다.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "UWB 장치와의 거리, 방향 정확도를 높이기 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이 앱은 BLE 기반의 장치 검색 및 연결을 위해 위치 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "정확한 위치 계산을 위해 모션 센서 접근이 필요합니다.";
 				INFOPLIST_KEY_NSNearbyInteractionUsageDescription = "이 앱은 근거리 상호작용을 위해 UWB 기능을 사용합니다.";
@@ -534,7 +533,6 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "Space UWB";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "이 앱은 백그라운드에서도 UWB 장치와 BLE 통신을 유지하기 위해 Bluetooth 권한이 필요합니다.";
 				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "UWB 장치와의 BLE 연결을 위해 이 권한이 필요합니다.";
-				INFOPLIST_KEY_NSCameraUsageDescription = "UWB 장치와의 거리, 방향 정확도를 높이기 위해 카메라 접근이 필요합니다.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이 앱은 BLE 기반의 장치 검색 및 연결을 위해 위치 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMotionUsageDescription = "정확한 위치 계산을 위해 모션 센서 접근이 필요합니다.";
 				INFOPLIST_KEY_NSNearbyInteractionUsageDescription = "이 앱은 근거리 상호작용을 위해 UWB 기능을 사용합니다.";
@@ -805,10 +803,10 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		EE86ECED2DBA17F700F8AE21 /* XCRemoteSwiftPackageReference "SpaceSDK-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/freegrowenterprise/SpaceSDK-iOS/";
+			repositoryURL = "https://github.com/freegrowenterprise/SpaceSDK-iOS";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = exactVersion;
+				version = 0.0.42;
 			};
 		};
 		EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */ = {

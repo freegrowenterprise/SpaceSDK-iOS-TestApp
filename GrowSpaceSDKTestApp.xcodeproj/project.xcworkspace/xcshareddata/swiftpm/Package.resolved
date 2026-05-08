@@ -1,5 +1,5 @@
 {
-  "originHash" : "d57d7cb01fc1f25f520ac1b1f0dbe60e1ec1fb785790aff2db955a40e9a9d8d7",
+  "originHash" : "c13f044ab50bea4b7cc5a8123844323bac272368e1b45f8bfe1db9b1bcb1ad99",
   "pins" : [
     {
       "identity" : "snapkit",
@@ -13,10 +13,10 @@
     {
       "identity" : "spacesdk-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/freegrowenterprise/SpaceSDK-iOS/",
+      "location" : "https://github.com/freegrowenterprise/SpaceSDK-iOS",
       "state" : {
-        "branch" : "master",
-        "revision" : "9175400d50f70f8e9d8dc0fdbb85506dac10cef5"
+        "revision" : "b1da23349eba4ddf863239fbc495b220f9997339",
+        "version" : "0.0.42"
       }
     }
   ],
