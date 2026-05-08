@@ -25,7 +25,7 @@ It enables direct testing of core features such as UWB connection, distance meas
     git clone https://github.com/freegrowenterprise/SpaceSDK-iOS-TestApp.git
     ```
 
-2. Open `GrowSpaceSDKTestApp.xcodeproj` in Xcode. SwiftPM will automatically resolve the SDK dependency at `https://github.com/freegrowenterprise/SpaceSDK-iOS` (currently pinned to `0.0.42`).
+2. Open `GrowSpaceSDKTestApp.xcodeproj` in Xcode. SwiftPM will automatically resolve the SDK dependency at `https://github.com/freegrowenterprise/SpaceSDK-iOS` (currently pinned to `0.0.43`).
 
 3. Connect a physical device and run the app
    > UWB features are **not available** on the iOS simulator.
@@ -75,7 +75,13 @@ https://github.com/user-attachments/assets/9d222cfe-886a-490c-b21d-48da70ff4dd7
 
 - A **Capability Info** page exposes the host phone's NearbyInteraction capabilities — direction support, camera assistance availability, precise distance measurement, and (on iOS 17.4+) extended distance measurement.
 - The ranging page also shows a small badge with the host phone's UWB chip name (`U1` / `U2`).
-- No camera permission is required by the app or SDK at any point.
+
+#### 🎥 AR World View / Camera Assistance Toggle (SDK 0.0.43+)
+
+- The ranging page exposes an **AR World View / Camera Assist** switch (default OFF).
+- Switching ON: a system camera-permission prompt appears on first use. If the user denies, the app shows an "Open Settings" alert and reverts the switch to OFF — UWB ranging keeps working without the camera (direction stays available on U1, unavailable on U2).
+- Switching the toggle while a scan is **already running** triggers a confirmation alert ("All active UWB sessions will be re-initialized"). On confirm, BLE stays connected but each NI session is stopped, invalidated, and re-created with the new `isCameraAssistanceEnabled` setting; ranging briefly pauses then resumes.
+- The ranging page itself is now a single scrollable container (settings + connected device cards), so a long device list no longer squeezes the cards into a narrow strip.
 
 ---
 

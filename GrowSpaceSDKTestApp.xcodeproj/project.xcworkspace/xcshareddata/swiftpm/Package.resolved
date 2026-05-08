@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/freegrowenterprise/SpaceSDK-iOS",
       "state" : {
-        "revision" : "b1da23349eba4ddf863239fbc495b220f9997339",
-        "version" : "0.0.42"
+        "revision" : "d1041fc1f40d41bf5a51b11e6e14b6a1a46881c8",
+        "version" : "0.0.43"
       }
     }
   ],

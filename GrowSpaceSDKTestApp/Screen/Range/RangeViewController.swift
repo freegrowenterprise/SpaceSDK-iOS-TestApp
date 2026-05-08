@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 import SnapKit
 import GrowSpaceSDK
@@ -18,6 +19,8 @@ class RangeViewController: UIViewController {
     private var maximumConnectionCount: Int = 4
     private var maximumConnectionDistance: Float = 80.0
     private var uwbUpdateTimeoutSeconds: Int = 5
+    /// startUWBRanging 으로 전달할 AR 활성 초기값. 스캔 중에는 setARWorldViewEnabled 로 바뀐다.
+    private var isEnableARWorldView: Bool = false
 
     var rangingStarted = false
     var demoModeTimer: Timer?
@@ -148,6 +151,27 @@ class RangeViewController: UIViewController {
         toggle.isOn = true
         return toggle
     }()
+
+    private let arWorldViewLabel: UILabel = {
+        let label = UILabel()
+        label.text = "AR World View / Camera Assist"
+        return label
+    }()
+
+    private let arWorldViewSwitch: UISwitch = {
+        let toggle = UISwitch()
+        toggle.isOn = false
+        return toggle
+    }()
+
+    private let explainARWorldViewText: UILabel = {
+        let label = UILabel()
+        label.text = "Camera-assisted NI session. Toggling during scan re-initializes all UWB sessions."
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 13)
+        label.numberOfLines = 0
+        return label
+    }()
     private let deviceContentStack = UIStackView()
     private var deviceViews: [String: UIView] = [:]
     private let deviceScrollView = UIScrollView()
@@ -206,15 +230,21 @@ class RangeViewController: UIViewController {
     }
 
     private func setupLayout() {
+        // 전체 페이지를 감싸는 스크롤뷰. 안쪽에 rootStack(세로) — 그 안에 configStack + deviceContentStack.
+        // 디바이스가 많이 잡혀도 페이지 전체가 위/아래로 스크롤된다. 하단 버튼은 고정.
+        deviceScrollView.alwaysBounceVertical = true
+        deviceScrollView.keyboardDismissMode = .interactive
+
+        let rootStack = UIStackView()
+        rootStack.axis = .vertical
+        rootStack.spacing = 16
+        rootStack.alignment = .fill
+
         let configStack = UIStackView()
         configStack.axis = .vertical
         configStack.spacing = 20
         configStack.alignment = .fill
-        view.addSubview(configStack)
-        configStack.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(12)
-            $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
-        }
+        rootStack.addArrangedSubview(configStack)
 
         // capability 배지를 가장 위에 배치
         capabilityBadgeLabel.snp.makeConstraints { $0.height.greaterThanOrEqualTo(28) }
@@ -292,14 +322,25 @@ class RangeViewController: UIViewController {
         connectConditionGroup.addArrangedSubview(explainConnectText)
         configStack.addArrangedSubview(connectConditionGroup)
 
+        let arSwitchRow = UIStackView()
+        arSwitchRow.axis = .horizontal
+        arSwitchRow.spacing = 8
+        arSwitchRow.alignment = .center
+        arSwitchRow.addArrangedSubview(arWorldViewLabel)
+        arSwitchRow.addArrangedSubview(arWorldViewSwitch)
+
+        let arGroup = UIStackView()
+        arGroup.axis = .vertical
+        arGroup.spacing = 4
+        arGroup.alignment = .fill
+        arGroup.addArrangedSubview(arSwitchRow)
+        arGroup.addArrangedSubview(explainARWorldViewText)
+        configStack.addArrangedSubview(arGroup)
+
         deviceContentStack.axis = .vertical
         deviceContentStack.spacing = 12
         deviceContentStack.alignment = .fill
-        deviceScrollView.addSubview(deviceContentStack)
-        deviceContentStack.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalTo(deviceScrollView.snp.width)
-        }
+        rootStack.addArrangedSubview(deviceContentStack)
 
         loadingIndicator.hidesWhenStopped = true
         deviceContentStack.addArrangedSubview(loadingIndicator)
@@ -307,6 +348,12 @@ class RangeViewController: UIViewController {
             $0.height.equalTo(44)
         }
 
+        // 디바이스 미검출 안내. 평소엔 deviceContentStack 의 첫 항목으로 살아있고
+        // updateNoDeviceLabel() 이 isHidden 토글로 보임/숨김 제어한다.
+        noDeviceLabel.snp.makeConstraints {
+            $0.height.greaterThanOrEqualTo(80)
+        }
+        deviceContentStack.addArrangedSubview(noDeviceLabel)
 
         buttonStackView.axis = .horizontal
         buttonStackView.spacing = 12
@@ -323,14 +370,15 @@ class RangeViewController: UIViewController {
 
         view.addSubview(deviceScrollView)
         deviceScrollView.snp.makeConstraints {
-            $0.top.equalTo(configStack.snp.bottom).offset(12)
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(12)
             $0.leading.trailing.equalTo(view.safeAreaLayoutGuide).inset(16)
             $0.bottom.equalTo(buttonStackView.snp.top).offset(-12)
         }
 
-        deviceScrollView.addSubview(noDeviceLabel)
-        noDeviceLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        deviceScrollView.addSubview(rootStack)
+        rootStack.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalTo(deviceScrollView.snp.width)
         }
     }
 
@@ -340,6 +388,7 @@ class RangeViewController: UIViewController {
         uwbStopButton.addTarget(self, action: #selector(stopUWBScan), for: .touchUpInside)
         distanceTextField.addTarget(self, action: #selector(distanceTextFieldDidChange), for: .editingChanged)
         dealyRemoveTextField.addTarget(self, action: #selector(delayRemoveTextFieldDidChange), for: .editingChanged)
+        arWorldViewSwitch.addTarget(self, action: #selector(arWorldViewSwitchChanged(_:)), for: .valueChanged)
     }
 
     private func setupNavigationBar() {
@@ -393,6 +442,91 @@ class RangeViewController: UIViewController {
         }
     }
 
+    /// AR 스위치가 바뀌면 호출. 스캔 중이면 컨펌 alert 후 SDK 런타임 토글 호출.
+    /// 비스캔 상태에서는 다음 startUWBScan 시 적용되도록 값만 저장한다.
+    @objc private func arWorldViewSwitchChanged(_ sender: UISwitch) {
+        let newValue = sender.isOn
+
+        // 토글 OFF 는 권한 체크 불필요 — 즉시 진행.
+        if !newValue {
+            applyARToggle(newValue, sender: sender)
+            return
+        }
+
+        // ON 시 카메라 권한을 먼저 확인하고 분기.
+        ensureCameraPermission { [weak self] granted in
+            guard let self = self else { return }
+            if granted {
+                self.applyARToggle(newValue, sender: sender)
+            } else {
+                // 권한 거부 → 스위치 원위치 + 설정 안내
+                sender.setOn(false, animated: true)
+                self.isEnableARWorldView = false
+                self.presentCameraPermissionDeniedAlert()
+            }
+        }
+    }
+
+    /// 토글 결과를 SDK / 내부 상태에 실제로 반영. 스캔 중이면 컨펌 alert 가 한번 더 끼어든다.
+    private func applyARToggle(_ newValue: Bool, sender: UISwitch) {
+        guard isScanning else {
+            isEnableARWorldView = newValue
+            return
+        }
+
+        let title = newValue ? "Enable AR / Camera Assist?" : "Disable AR / Camera Assist?"
+        let message = "All active UWB sessions will be re-initialized.\nBLE connections stay, but ranging will briefly pause."
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            sender.setOn(!newValue, animated: true)
+        })
+        alert.addAction(UIAlertAction(title: "Continue", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.isEnableARWorldView = newValue
+            self.growSpaceUWBSDK.setARWorldViewEnabled(newValue)
+            self.presentToast(
+                message: newValue ? "AR / Camera Assist enabled — sessions restarting" : "AR / Camera Assist disabled — sessions restarting",
+                backgroundColor: .systemBlue
+            )
+        })
+        present(alert, animated: true)
+    }
+
+    /// 카메라 권한을 보장한다. notDetermined 면 시스템 다이얼로그를 띄우고 결과를 콜백.
+    /// authorized 면 즉시 true, denied/restricted 면 즉시 false.
+    private func ensureCameraPermission(completion: @escaping (Bool) -> Void) {
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+        switch status {
+        case .authorized:
+            completion(true)
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                DispatchQueue.main.async { completion(granted) }
+            }
+        case .denied, .restricted:
+            completion(false)
+        @unknown default:
+            completion(false)
+        }
+    }
+
+    /// 카메라 권한이 거부되어 AR 모드를 켤 수 없을 때 안내 + 설정 화면 진입.
+    private func presentCameraPermissionDeniedAlert() {
+        let alert = UIAlertController(
+            title: "Camera Permission Required",
+            message: "AR / Camera Assist needs camera access. Enable it in Settings to use this feature.\n\nUWB ranging keeps working without the camera. Direction is still measured on U1 chips, but will be unavailable on U2 chips.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Open Settings", style: .default) { _ in
+            if let url = URL(string: UIApplication.openSettingsURLString),
+               UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
+        })
+        present(alert, animated: true)
+    }
+
     @objc private func showBlockList() {
         let vc = BlockListViewController(sdk: growSpaceUWBSDK)
         navigationController?.pushViewController(vc, animated: true)
@@ -429,6 +563,17 @@ class RangeViewController: UIViewController {
     @objc private func startUWBScan() {
         guard !isScanning else { return }
 
+        // AR 토글이 켜진 상태로 start 하려는데 카메라 권한이 빠져있다면 OFF 로 강등 + 사용자 안내.
+        if isEnableARWorldView {
+            let status = AVCaptureDevice.authorizationStatus(for: .video)
+            if status == .denied || status == .restricted {
+                isEnableARWorldView = false
+                arWorldViewSwitch.setOn(false, animated: true)
+                presentCameraPermissionDeniedAlert()
+                // AR 없이 그대로 진행 (UWB 자체는 동작)
+            }
+        }
+
 //        LiveActivityManager.shared.start()
         isScanning = true
         updateButtonStates()
@@ -450,6 +595,7 @@ class RangeViewController: UIViewController {
             maximumConnectionCount: self.maximumConnectionCount,
             replacementDistanceThreshold: self.maximumConnectionDistance,
             uwbUpdateTimeoutSeconds: self.uwbUpdateTimeoutSeconds,
+            isEnableARWorldView: self.isEnableARWorldView,
             onUpdate: { [weak self] result in
                 guard let self = self else { return }
 

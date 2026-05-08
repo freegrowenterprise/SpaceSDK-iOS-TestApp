@@ -806,7 +806,7 @@
 			repositoryURL = "https://github.com/freegrowenterprise/SpaceSDK-iOS";
 			requirement = {
 				kind = exactVersion;
-				version = 0.0.42;
+				version = 0.0.43;
 			};
 		};
 		EEBB92422D83EE930047DEF2 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
